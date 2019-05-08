@@ -9,7 +9,16 @@ var renderer, scene, origin;
 
 // time + objectives
 var time;
-var objectives = {objPulse: false};
+var objectives = {
+                    objPulse:  false,
+                    objPart:   false,
+                    objColorR: false,
+                    objColorG: false,
+                    objColorB: false,
+                    objColor2: false,
+                    objColor4: false,
+                    objColor8: false
+                 };
 
 // Lighting objects
 var ambientWhite  = new THREE.AmbientLight(0xffffff, 0.5);
