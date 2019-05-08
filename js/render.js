@@ -266,12 +266,17 @@ function updateColors() {
     if (!object.material.trueColor) object.material.trueColor = object.material.color;
 
     let hex = object.material.trueColor.getHex();
+    let r = (hex & RED) >>> 16;
+    let g = (hex & GRN) >>> 8;
+    let b = (hex & BLU);
 
     // Special case: if none of R,G,B unlocked, set to white
+    /*
     if (!objectives.red && !objectives.green && !objectives.blue) {
       object.material.color = new THREE.Color(0xFFFFFF);
       continue;
     }
+    */
 
     // Filter out colors that are not unlocked
     if (!objectives.red)    hex = hex & NO_RED;
@@ -282,6 +287,13 @@ function updateColors() {
     if (!objectives.bit2)   hex = hex & MASK_1;
     if (!objectives.bit4)   hex = hex & MASK_2;
     if (!objectives.bit8)   hex = hex & MASK_4;
+
+    // If the color was filtered down to black, set it to a shade of grey based on brightness
+    if (hex == 0) {
+      let l = ((r+g+b) / 255.0) / 3.0;
+      object.material.color = new THREE.Color(l,l,l);
+      continue;
+    }
 
     object.material.color = new THREE.Color(hex);
   }
