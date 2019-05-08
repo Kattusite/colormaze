@@ -9,7 +9,7 @@ var renderer, scene, origin;
 
 // time + objectives
 var time;
-var objectives = {};
+var objectives = {objPulse: false};
 
 // Lighting objects
 var ambientWhite  = new THREE.AmbientLight(0xffffff, 0.5);
@@ -164,6 +164,7 @@ function initRenderer() {
 
 
   let geometry1 = new THREE.PlaneGeometry(300, 300, 1, 1);
+  let material1 = new THREE.MeshLambertMaterial({color: 0xFF7777});
   let mesh1 = new THREE.Mesh(geometry1, material);
   mesh1.position.set(0,0,-1100);
 
@@ -191,6 +192,7 @@ function render() {
 
       // We probably want to move both cameras too, leaving the rest of scene behind
       if (!boundingBox.containsPoint(mesh.position)) {
+        objectives["objPulse"] = true;
         camera2d.position.add(action.vector);
         camera3d.position.add(action.vector);
       } 
@@ -204,8 +206,10 @@ function render() {
 
   // Rotate the cube a little bit (it looks like it's bouncing, sort of...)
   // mesh.rotation.x += 0.02;
-  let scale = Math.max(1, 1.075 * Math.sin(time / 175));
-  mesh.scale.set(scale, scale, scale);
+  if (objectives["objPulse"]) {
+    let scale = Math.max(1, 1.075 * Math.sin(time / 175));
+    mesh.scale.set(scale, scale, scale);
+  }
 
   // Render the scene repeatedly
   renderer.render(scene, camera);
