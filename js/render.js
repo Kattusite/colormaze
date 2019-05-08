@@ -192,8 +192,10 @@ function render() {
 
   // Rotate the cube a little bit (it looks like it's bouncing, sort of...)
   // mesh.rotation.x += 0.02;
+  let scaleFlat  = Math.max(1, 1.075 * Math.sin(time / 175));
+  let scaleDeep = Math.max(1, 1.075 * Math.cos(time / 175));
   let scale = Math.max(1, 1.075 * Math.sin(time / 175));
-  mesh.scale.set(scale, scale, scale);
+  mesh.scale.set(scaleFlat, scaleFlat, scaleDeep);
 
   // Render the scene repeatedly
   renderer.render(scene, camera);
