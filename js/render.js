@@ -12,12 +12,12 @@ var time;
 var objectives = {
   objPulse:  false,
   objPart:   false,
-  objColorR: false,
-  objColorG: false,
-  objColorB: false,
-  objColor2: false,
-  objColor4: false,
-  objColor8: false
+  red: false,
+  green: false,
+  blue: false,
+  bit2: false,
+  bit4: false,
+  bit8: false,
 };
 
 // Lighting objects
@@ -220,9 +220,56 @@ function render() {
     mesh.scale.set(scale, scale, scale);
   }
 
+  // Update all colors (inefficient to keep this in loop -- should put it only once when unlocks occur)
+  updateColors();
+
   // Render the scene repeatedly
   renderer.render(scene, camera);
   requestAnimationFrame(render);
+}
+
+// Downscale the quality of colors in the scene to those supported by currently
+// unlocked objectives
+function updateColors() {
+  let RED = 0xFF0000;
+  let GRN = 0x00FF00;
+  let BLU = 0x0000FF;
+  let NO_RED = 0x00FFFF;
+  let NO_GRN = 0xFF00FF;
+  let NO_BLU = 0xFFFF00;
+
+  let MASK_1 = 0x808080;
+  let MASK_2 = 0xC0C0C0;
+  let MASK_4 = 0xF0F0F0;
+  // let MASK_8 = 0xFFFFFF;
+
+  for (let object of scene.children) {
+    // If this object has no (material) color ignore it
+    if (!object.material) continue;
+
+    // The first time this object is processed, save its original color
+    if (!object.material.trueColor) object.material.trueColor = object.material.color;
+
+    let hex = object.material.trueColor.getHex();
+
+    // Special case: if none of R,G,B unlocked, set to white
+    if (!objectives.red && !objectives.green && !objectives.blue) {
+      object.material.color = new THREE.Color(0xFFFFFF);
+      continue;
+    }
+
+    // Filter out colors that are not unlocked
+    if (!objectives.red)    hex = hex & NO_RED;
+    if (!objectives.green)  hex = hex & NO_GRN;
+    if (!objectives.blue)   hex = hex & NO_BLU;
+
+    // Filter out fidelities that are not unlocked
+    if (!objectives.bit2)   hex = hex & MASK_1;
+    if (!objectives.bit4)   hex = hex & MASK_2;
+    if (!objectives.bit8)   hex = hex & MASK_4;
+
+    object.material.color = new THREE.Color(hex);
+  }
 }
 
 // Return a bounding box representing objects in the orthographic viewing frustum
@@ -238,6 +285,8 @@ function getScreenBoundingBox() {
   let box = new THREE.Box3(min, max);
   return box;
 }
+
+
 
 /******************************************************************************/
 /**                      EVENT HANDLERS                                      **/
