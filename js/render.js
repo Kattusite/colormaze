@@ -164,7 +164,6 @@ function initRenderer() {
 
 
   let geometry1 = new THREE.PlaneGeometry(300, 300, 1, 1);
-  let material1 = new THREE.MeshLambertMaterial({color: 0xAFABAA});
   let mesh1 = new THREE.Mesh(geometry1, material);
   mesh1.position.set(0,0,-1100);
 
