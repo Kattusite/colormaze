@@ -14,6 +14,7 @@ var time;
 var objectives = {
   objPulse:   false,
   objPart:    false,
+  gray:       false,
   red:        false,
   green:      false,
   blue:       false,
@@ -151,7 +152,7 @@ function initKeybindings() {
 function initRenderer() {
   // Initialize the WebGL renderer
   renderer = new THREE.WebGLRenderer({canvas: $('#gameCanvas')[0], antialias: true});
-  renderer.setClearColor(0x000000);
+  renderer.setClearColor(0x111111);
   renderer.setPixelRatio(window.devicePixelRatio);
 
   let width = window.innerWidth;
@@ -183,7 +184,7 @@ function initRenderer() {
 
 
   let geometry1 = new THREE.PlaneGeometry(300, 300, 1, 1);
-  let material1 = new THREE.MeshLambertMaterial({color: 0xFF8877});
+  let material1 = new THREE.MeshLambertMaterial({color: 0x448877});
   let mesh1 = new THREE.Mesh(geometry1, material1);
   mesh1.position.set(0,0,-1100);
 
@@ -291,6 +292,9 @@ function updateColors() {
     // If the color was filtered down to black, set it to a shade of grey based on brightness
     if (hex == 0) {
       let l = ((r+g+b) / 255.0) / 3.0;
+
+      if (!objectives.grey) l = Math.round(l);
+
       object.material.color = new THREE.Color(l,l,l);
       continue;
     }
