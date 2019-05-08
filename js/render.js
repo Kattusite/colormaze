@@ -273,8 +273,9 @@ function updateColors() {
   // let MASK_8 = 0xFFFFFF;
 
   for (let object of scene.children) {
-    // If this object has no (material) color ignore it
+    // If this object has no material color (or has an override) ignore it
     if (!object.material) continue;
+    if (object.material.showTrueColor) continue;
 
     // The first time this object is processed, save its original color
     if (!object.material.trueColor) object.material.trueColor = object.material.color;
