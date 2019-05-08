@@ -10,15 +10,15 @@ var renderer, scene, origin;
 // time + objectives
 var time;
 var objectives = {
-                    objPulse:  false,
-                    objPart:   false,
-                    objColorR: false,
-                    objColorG: false,
-                    objColorB: false,
-                    objColor2: false,
-                    objColor4: false,
-                    objColor8: false
-                 };
+  objPulse:  false,
+  objPart:   false,
+  objColorR: false,
+  objColorG: false,
+  objColorB: false,
+  objColor2: false,
+  objColor4: false,
+  objColor8: false
+};
 
 // Lighting objects
 var ambientWhite  = new THREE.AmbientLight(0xffffff, 0.5);
@@ -204,7 +204,7 @@ function render() {
         objectives["objPulse"] = true;
         camera2d.position.add(action.vector);
         camera3d.position.add(action.vector);
-      } 
+      }
 
       // Make sure the cube doesn't leave the viewable area (a little buggy still)
       //mesh.position.clamp(boundingBox.min, boundingBox.max);
