@@ -80,6 +80,7 @@ function initRenderer() {
 function render() {
   // Trigger all actions for keys that are pressed down
   for (let key in keysPressed) {
+    if (!KEY_BINDINGS[key]) continue;
     let action = KEY_BINDINGS[key];
     // For now assume that all actions move the cube
     mesh.position.add(action.vector);
