@@ -184,12 +184,15 @@ function initRenderer() {
 
 
   let geometry1 = new THREE.PlaneGeometry(300, 300, 1, 1);
-  let material1 = new THREE.MeshLambertMaterial({color: 0x448877});
+  let material1 = new THREE.MeshLambertMaterial({color: 0x447777});
   let mesh1 = new THREE.Mesh(geometry1, material1);
   mesh1.position.set(0,0,-1100);
 
   scene.add(mesh);
   scene.add(mesh1);
+
+  // Disable colors that aren't yet unlocked
+  updateColors();
 
 
   // ==================================================================
@@ -235,13 +238,23 @@ function render() {
   }
 
   // Update all colors
-  // (inefficient to keep this in loop
-  //  -- should put it only once when unlocks occur, but this is good for debugging)
-  updateColors();
+  // Not needed as long as we call toggleColor() every time we want to add/remove a new color
+  // updateColors();
 
   // Render the scene repeatedly
   renderer.render(scene, camera);
   requestAnimationFrame(render);
+}
+
+// Toggle (lock/unlock) the color of the given name
+// Accepted values are "grey", "red", "green", "blue", "bit2", "bit4", "bit8"
+function toggleColor(color) {
+  if (!["grey", "red", "green", "blue", "bit2", "bit4", "bit8"].includes(color)) {
+    console.error("Illegal color passed to toggleColor!");
+    return;
+  }
+  objectives[color] = !objectives[color];
+  updateColors();
 }
 
 // Downscale the quality of colors in the scene to those supported by currently
