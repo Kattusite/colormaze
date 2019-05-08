@@ -1,8 +1,17 @@
+
+/******************************************************************************/
+/**                      CONSTANTS                                           **/
+/**                                                                          **/
+/******************************************************************************/
+
 var renderer, camera, camera2d, camera3d, scene, geometry, material, mesh;
+
+// Near and far viewing plane constants
+const NEAR = 0.1;
+const FAR = 3000;
 
 // Are we using the 2d or 3d camera?
 var flat = false;
-
 
 // Keys Pressed at any given moment
 var keysPressed = {};
@@ -10,8 +19,16 @@ var keysPressed = {};
 // Movement speed
 const speed = 10;
 
-// Possible actions
+
+/******************************************************************************/
+/**                      ACTIONS  & KEYBINDINGS                              **/
+/**                                                                          **/
+/******************************************************************************/
+// Possible action types
+// MOVE: Move the player cube by its speed as long as key is held
 const MOVE    = "move";
+
+// SHIFT: Change from 2d to 3d camera and vice versa.
 const SHIFT   = "change perspective";
 
 // Actions that happen in every frame the key is held
@@ -54,6 +71,11 @@ const ACTIONS = [
 
 const KEY_BINDINGS = {};
 
+/******************************************************************************/
+/**                      INITIALIZERS                                        **/
+/**                                                                          **/
+/******************************************************************************/
+
 // Initialize the document, handlers, and renderer
 function init() {
   initRenderer();
@@ -82,13 +104,11 @@ function initRenderer() {
 
   let width = window.innerWidth;
   let height = window.innerHeight;
-  let near = 0.1;
-  let far = 3000;
 
   renderer.setSize(width, height);
 
-  camera2d = new THREE.OrthographicCamera(width/-2, width/2, height/2, height/-2, near, far);
-  camera3d = new THREE.PerspectiveCamera(35, width/height, near, far);
+  camera2d = new THREE.OrthographicCamera(width/-2, width/2, height/2, height/-2, NEAR, FAR);
+  camera3d = new THREE.PerspectiveCamera(35, width/height, NEAR, FAR);
   //camera2d.position.set(0,10,0);
   //camera3d.position.set(0,10,0);
   camera = camera3d;
@@ -108,27 +128,52 @@ function initRenderer() {
 
 // Render a scene (many times per second)
 function render() {
-  // Trigger all actions for keys that are pressed down
 
+  let boundingBox = getScreenBoundingBox();
+
+  // Trigger all actions for keys that are pressed down
   for (let key in keysPressed) {
     if (!KEY_BINDINGS[key]) continue;
     let action = KEY_BINDINGS[key];
 
     // Decide what to do based on the action type
     if (action.type === MOVE) {
+      // Move the cube
       mesh.position.add(action.vector);
-    } else if (action.type === SHIFT) {
 
+      // Make sure the cube doesn't leave the viewable area (a little buggy still)
+      mesh.position.clamp(boundingBox.min, boundingBox.max);
     }
 
 
   }
 
+  // Rotate the cube a little bit (it looks like it's bouncing, sort of...)
   mesh.rotation.x += 0.02;
+
+  // Render the scene repeatedly
   renderer.render(scene, camera);
   requestAnimationFrame(render);
 }
 
+// Return a bounding box representing objects in the orthographic viewing frustum
+function getScreenBoundingBox() {
+  let w = window.innerWidth;
+  let h = window.innerHeight;
+
+  let min = new THREE.Vector3(-w/2, -h/2, -FAR);
+  let max = new THREE.Vector3(w/2, h/2, -NEAR);
+
+  let box = new THREE.Box3(min, max);
+  return box;
+}
+
+/******************************************************************************/
+/**                      EVENT HANDLERS                                      **/
+/**                                                                          **/
+/******************************************************************************/
+
+// Handle when keys are held down
 function handleKeydown(event) {
   let key = event.key;
 
@@ -140,6 +185,7 @@ function handleKeydown(event) {
   keysPressed[key] = true;
 }
 
+// Handle when keys are released
 function handleKeyup(event) {
   let key = event.key;
 
@@ -151,6 +197,7 @@ function handleKeyup(event) {
   delete keysPressed[key];
 }
 
+// Handle when keys are pushed and released
 function handleKeypress(event) {
   let key = event.key;
 
@@ -166,12 +213,19 @@ function handleKeypress(event) {
   }
 }
 
+// Update the camera and renderer parameters when the window changes size
 function handleResize() {
-  cameras = [camera2d, camera3d];
-  for (let camera of cameras) {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-  }
+  let w = window.innerWidth;
+  let h = window.innerHeight;
+
+  camera2d.left   = -w / 2;
+  camera2d.right  =  w / 2;
+  camera2d.top    =  h / 2;
+  camera2d.bottom = -h / 2;
+  camera2d.updateProjectionMatrix();
+
+  camera3d.aspect = window.innerWidth / window.innerHeight;
+  camera3d.updateProjectionMatrix();
 
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
