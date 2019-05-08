@@ -7,18 +7,25 @@
 // Renderer + Scene objects
 var renderer, scene, origin;
 
-// time + objectives
+// Current system time in milliseconds
 var time;
+
+// Objectives and their current state of unlockedness
 var objectives = {
-  objPulse:  false,
-  objPart:   false,
-  red: false,
-  green: false,
-  blue: false,
-  bit2: false,
-  bit4: false,
-  bit8: false,
+  objPulse:   false,
+  objPart:    false,
+  red:        false,
+  green:      false,
+  blue:       false,
+  bit2:       false,
+  bit4:       false,
+  bit8:       false,
 };
+
+// Particles and projectiles currently living in the scene.
+// Projectiles can hit the player, particles can't.
+var particles = [];
+var projectiles = [];
 
 // Lighting objects
 var ambientWhite  = new THREE.AmbientLight(0xffffff, 0.5);
@@ -165,6 +172,9 @@ function initRenderer() {
   // Add lights (playing with these leads to super cool effects)
   scene.add(ambientWhite);
 
+
+  // ==================== SET UP THE SCENE ===========================
+  // (move this to its own function or file eventually)
   // Add a cube to the scene
   geometry = new THREE.CubeGeometry(50,50,50);
   material = new THREE.MeshLambertMaterial({color: 0xFFFFFF});
@@ -173,12 +183,15 @@ function initRenderer() {
 
 
   let geometry1 = new THREE.PlaneGeometry(300, 300, 1, 1);
-  let material1 = new THREE.MeshLambertMaterial({color: 0xFF7777});
-  let mesh1 = new THREE.Mesh(geometry1, material);
+  let material1 = new THREE.MeshLambertMaterial({color: 0xFF8877});
+  let mesh1 = new THREE.Mesh(geometry1, material1);
   mesh1.position.set(0,0,-1100);
 
   scene.add(mesh);
   scene.add(mesh1);
+
+
+  // ==================================================================
 
   requestAnimationFrame(render);
 }
@@ -220,7 +233,9 @@ function render() {
     mesh.scale.set(scale, scale, scale);
   }
 
-  // Update all colors (inefficient to keep this in loop -- should put it only once when unlocks occur)
+  // Update all colors
+  // (inefficient to keep this in loop
+  //  -- should put it only once when unlocks occur, but this is good for debugging)
   updateColors();
 
   // Render the scene repeatedly
