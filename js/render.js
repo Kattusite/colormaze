@@ -7,6 +7,9 @@
 // Renderer + Scene objects
 var renderer, scene;
 
+// time
+var time;
+
 // Lighting objects
 var ambientWhite  = new THREE.AmbientLight(0xffffff, 0.5);
 var ambientRed    = new THREE.AmbientLight(0xff0000, 0.5);
@@ -166,6 +169,7 @@ function initRenderer() {
 function render() {
 
   let boundingBox = getScreenBoundingBox();
+  time = Date.now();
 
   // Trigger all actions for keys that are pressed down
   for (let key in keysPressed) {
@@ -187,7 +191,9 @@ function render() {
   }
 
   // Rotate the cube a little bit (it looks like it's bouncing, sort of...)
-  mesh.rotation.x += 0.02;
+  // mesh.rotation.x += 0.02;
+  let scale = Math.max(1, 1.075 * Math.sin(time / 175));
+  mesh.scale.set(scale, scale, scale);
 
   // Render the scene repeatedly
   renderer.render(scene, camera);
