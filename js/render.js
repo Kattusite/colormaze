@@ -116,12 +116,12 @@ function render() {
 
     // Decide what to do based on the action type
     if (action.type === MOVE) {
-
+      mesh.position.add(action.vector);
     } else if (action.type === SHIFT) {
 
     }
 
-    mesh.position.add(action.vector);
+
   }
 
   mesh.rotation.x += 0.02;
