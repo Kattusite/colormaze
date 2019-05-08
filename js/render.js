@@ -4,7 +4,24 @@
 /**                                                                          **/
 /******************************************************************************/
 
-var renderer, camera, camera2d, camera3d, scene, geometry, material, mesh;
+// Renderer + Scene objects
+var renderer, scene;
+
+// Lighting objects
+var ambientWhite  = new THREE.AmbientLight(0xffffff, 0.5);
+var ambientRed    = new THREE.AmbientLight(0xff0000, 0.5);
+var ambientGreen  = new THREE.AmbientLight(0x00ff00, 0.5);
+var ambientBlue   = new THREE.AmbientLight(0x0000ff, 0.5);
+
+var pointWhite = new THREE.PointLight(0xffffff, 0.5);
+
+// Camera objects
+var camera; // The camera currently being used (either camera2d, camera3d)
+var camera2d; // The 2d orthographic camera
+var camera3d; // The 3d perspective camera
+
+// Geometry and mesh objects
+var geometry, material, mesh;
 
 // Near and far viewing plane constants
 const NEAR = 0.1;
@@ -31,11 +48,15 @@ const MOVE    = "move";
 // SHIFT: Change from 2d to 3d camera and vice versa.
 const SHIFT   = "change perspective";
 
+// ADD/REM_LIGHT: Add or remove a light from the scene
+const ADD_LIGHT = "add light";
+const REM_LIGHT = "remove light";
+
 // Actions that happen in every frame the key is held
 const CONTINUING_ACTIONS = [MOVE];
 
 // Actions that happen once every time the key is pushed and released
-const INSTANT_ACTIONS = [SHIFT];
+const INSTANT_ACTIONS = [SHIFT, ADD_LIGHT, REM_LIGHT];
 
 // Definitions of all the actions
 const ACTIONS = [
@@ -47,25 +68,35 @@ const ACTIONS = [
   },
   // Move Down
   {
-    boundKeys: ["ArrowDown", "s"],
-    type:      MOVE,
-    vector:    new THREE.Vector3(0, -speed, 0)
+    boundKeys:    ["ArrowDown", "s"],
+    type:         MOVE,
+    vector:       new THREE.Vector3(0, -speed, 0)
   },
   // Move left
   {
-    boundKeys: ["ArrowLeft", "a"],
-    type:    MOVE,
-    vector:    new THREE.Vector3(-speed, 0, 0)
+    boundKeys:    ["ArrowLeft", "a"],
+    type:         MOVE,
+    vector:       new THREE.Vector3(-speed, 0, 0)
   },
   // Move right
   {
-    boundKeys: ["ArrowRight", "d"],
-    type:    MOVE,
-    vector:    new THREE.Vector3(speed, 0, 0)
+    boundKeys:    ["ArrowRight", "d"],
+    type:         MOVE,
+    vector:       new THREE.Vector3(speed, 0, 0)
   },
   {
-    boundKeys: ["o"],
-    type:    SHIFT
+    boundKeys:    ["o"],
+    type:         SHIFT
+  },
+  {
+    boundKeys:    ["-"],
+    type:         REM_LIGHT,
+    light:        pointWhite
+  },
+  {
+    boundKeys:    ["="],
+    type:         ADD_LIGHT,
+    light:        pointWhite
   }
 ];
 
@@ -96,8 +127,9 @@ function initKeybindings() {
   }
 }
 
-// Initialize the renderer
+// Initialize everything needed to start displaying the WebGL scene in-browser
 function initRenderer() {
+  // Initialize the WebGL renderer
   renderer = new THREE.WebGLRenderer({canvas: $('#gameCanvas')[0], antialias: true});
   renderer.setClearColor(0x000000);
   renderer.setPixelRatio(window.devicePixelRatio);
@@ -107,6 +139,7 @@ function initRenderer() {
 
   renderer.setSize(width, height);
 
+  // Initialize the cameras
   camera2d = new THREE.OrthographicCamera(width/-2, width/2, height/2, height/-2, NEAR, FAR);
   camera3d = new THREE.PerspectiveCamera(35, width/height, NEAR, FAR);
   //camera2d.position.set(0,10,0);
@@ -115,9 +148,12 @@ function initRenderer() {
 
   scene = new THREE.Scene();
 
+  // Add lights (playing with these leads to super cool effects)
+  scene.add(ambientWhite);
+
   // Add a cube to the scene
   geometry = new THREE.CubeGeometry(100,100,100);
-  material = new THREE.MeshBasicMaterial();
+  material = new THREE.MeshLambertMaterial({color: 0xFFFFFF});
   mesh = new THREE.Mesh(geometry, material);
   mesh.position.set(0,0,-1000);
 
@@ -210,6 +246,12 @@ function handleKeypress(event) {
     flat = !flat;
     if (flat) camera = camera2d;
     else      camera = camera3d;
+  }
+  else if (action.type == ADD_LIGHT) {
+    scene.add(action.light);
+  }
+  else if (action.type == REM_LIGHT) {
+    scene.remove(action.light);
   }
 }
 
