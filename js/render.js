@@ -5,10 +5,11 @@
 /******************************************************************************/
 
 // Renderer + Scene objects
-var renderer, scene;
+var renderer, scene, origin;
 
-// time
+// time + objectives
 var time;
+var objectives = {};
 
 // Lighting objects
 var ambientWhite  = new THREE.AmbientLight(0xffffff, 0.5);
@@ -150,17 +151,24 @@ function initRenderer() {
   camera = camera3d;
 
   scene = new THREE.Scene();
+  origin = new THREE.Vector3(0, 0, 0);
 
   // Add lights (playing with these leads to super cool effects)
   scene.add(ambientWhite);
 
   // Add a cube to the scene
-  geometry = new THREE.CubeGeometry(100,100,100);
+  geometry = new THREE.CubeGeometry(50,50,50);
   material = new THREE.MeshLambertMaterial({color: 0xFFFFFF});
   mesh = new THREE.Mesh(geometry, material);
   mesh.position.set(0,0,-1000);
 
+
+  let geometry1 = new THREE.PlaneGeometry(300, 300, 1, 1);
+  let mesh1 = new THREE.Mesh(geometry1, material);
+  mesh1.position.set(0,0,-1100);
+
   scene.add(mesh);
+  scene.add(mesh1);
 
   requestAnimationFrame(render);
 }
@@ -182,9 +190,13 @@ function render() {
       mesh.position.add(action.vector);
 
       // We probably want to move both cameras too, leaving the rest of scene behind
+      if (!boundingBox.containsPoint(mesh.position)) {
+        camera2d.position.add(action.vector);
+        camera3d.position.add(action.vector);
+      } 
 
       // Make sure the cube doesn't leave the viewable area (a little buggy still)
-      mesh.position.clamp(boundingBox.min, boundingBox.max);
+      //mesh.position.clamp(boundingBox.min, boundingBox.max);
     }
 
 
@@ -207,8 +219,10 @@ function getScreenBoundingBox() {
   let w = window.innerWidth;
   let h = window.innerHeight;
 
-  let min = new THREE.Vector3(-w/2, -h/2, -FAR);
-  let max = new THREE.Vector3(w/2, h/2, -NEAR);
+  let min = new THREE.Vector3(-w/4, -h/4, -FAR);
+  let max = new THREE.Vector3(w/4, h/4, -NEAR);
+  min.add(camera.position);
+  max.add(camera.position);
 
   let box = new THREE.Box3(min, max);
   return box;
