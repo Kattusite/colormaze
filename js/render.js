@@ -177,6 +177,8 @@ function render() {
       // Move the cube
       mesh.position.add(action.vector);
 
+      // We probably want to move both cameras too, leaving the rest of scene behind
+
       // Make sure the cube doesn't leave the viewable area (a little buggy still)
       mesh.position.clamp(boundingBox.min, boundingBox.max);
     }
