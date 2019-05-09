@@ -19,6 +19,9 @@ var entities = [];
 
 var activeLights = {};
 
+// Walls/collision objects
+var walls = [];
+
 // Geometry and mesh objects
 var geometry, material, mesh;
 
@@ -102,9 +105,35 @@ function initRenderer() {
   scene.add(shooter.mesh);
   entities.push(shooter);
 
+  // create 4 basic walls (heights and relative positions can be changed later)
+  let geometry2 = new THREE.BoxGeometry(30, 400, 80, 1);
+  let wallMesh1 = new THREE.Mesh(geometry2, material);
+  wallMesh1.position.set(-800, 0, -1000);
+  walls.push(wallMesh1);
+
+  let geometry3 = new THREE.BoxGeometry(20, 700, 80, 1);
+  let wallMesh2 = new THREE.Mesh(geometry3, material);
+  wallMesh2.position.set(800, 0, -1000);
+  walls.push(wallMesh2);
+
+  let geometry4 = new THREE.BoxGeometry(500, 50, 80, 1);
+  let wallMesh3 = new THREE.Mesh(geometry4, material);
+  wallMesh3.position.set(0, -500, -1000);
+  walls.push(wallMesh3);
+
+  let geometry5 = new THREE.BoxGeometry(300, 40, 80, 1);
+  let wallMesh4 = new THREE.Mesh(geometry5, material);
+  wallMesh4.position.set(100, 400, -1000);
+  walls.push(wallMesh4);
+
 
   // scene.add(mesh);
   scene.add(mesh1);
+
+  scene.add(wallMesh1);
+  scene.add(wallMesh2);
+  scene.add(wallMesh3);
+  scene.add(wallMesh4);
 
   // Disable colors that aren't yet unlocked
   updateColors();
