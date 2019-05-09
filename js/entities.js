@@ -1,0 +1,160 @@
+
+/******************************************************************************/
+/**                      Entities                                            **/
+/**                                                                          **/
+/******************************************************************************/
+// Entities are expected to implement .animate() and .isAlive()
+
+
+/******************************************************************************/
+/**                      Player                                              **/
+/**                                                                          **/
+/******************************************************************************/
+
+
+function Player() {
+  this.geometry = new THREE.CubeGeometry(50,50,50);
+  this.material = new THREE.MeshLambertMaterial({color: 0xFFFFFF});
+  this.mesh = new THREE.Mesh(this.geometry, this.material);
+  this.mesh.position.add(new THREE.Vector3(0,0,-1000));
+
+  this.position = this.mesh.position;
+
+  this.health = 100;
+}
+
+Player.prototype.animate = function() {
+  let boundingBox = getScreenBoundingBox();
+
+  // Trigger all actions for keys that are pressed down
+  for (let key in keysPressed) {
+    if (!KEY_BINDINGS[key]) continue;
+    let action = KEY_BINDINGS[key];
+
+    // If a move action is active, move the player in the relevant direction.
+    if (action.type === MOVE) {
+      this.mesh.position.add(action.vector);
+
+      // If player strays out of central bounding box, chase them with camera
+      if (!boundingBox.containsPoint(this.mesh.position)) {
+        objectives["objPulse"] = true;
+        camera2d.position.add(action.vector);
+        camera3d.position.add(action.vector);
+      }
+    }
+  }
+
+  // Add the pulsate/heartbeat effect to the player's mesh.
+  if (objectives["objPulse"]) {
+    let scale = Math.max(1, 1.075 * Math.sin(time / 175));
+    mesh.scale.set(scale, scale, scale);
+  }
+
+  this.position = this.mesh.position;
+}
+
+Player.prototype.isDead = function() {
+  return (this.health <= 0);
+}
+
+
+/******************************************************************************/
+/**                      SHOOTER                                             **/
+/**                                                                          **/
+/******************************************************************************/
+
+
+function Shooter(x, y, z) {
+  this.geometry = new THREE.TetrahedronGeometry(25);
+  this.material = new THREE.MeshLambertMaterial({color: 0xbb4444});
+  this.mesh     = new THREE.Mesh(this.geometry, this.material);
+  this.mesh.position.add(new THREE.Vector3(x,y,z));
+
+  this.position = this.mesh.position;
+
+  this.firingDelay = 1500; // minimum time between shots
+  this.randDelay = 1000;   // max random extra time between shots
+  this.prevShot = undefined;   // time in ms of last shot
+  this.nextShot = time + this.firingDelay + this.randDelay;  // time in ms of next shot
+
+  this.target = undefined;
+}
+
+// Function to animate this shooter every frame
+Shooter.prototype.animate = function() {
+  this.mesh.rotation.x += 0.01;
+
+  // If we have passed our time to shoot, fire a shot and update times
+  // TODO: Only fire if the target is nearby
+  if (time > this.nextShot) {
+    this.fireAt(player.position);
+    this.prevShot = time;
+    this.nextShot = time + this.firingDelay;
+    this.nextShot += Math.floor(Math.random() * this.randDelay);
+  }
+
+  // TODO: Change colors based on time to fire
+
+  this.position = this.mesh.position;
+}
+
+// Fire a projectile at a target location
+Shooter.prototype.fireAt = function(target) {
+  let dir = target.clone().sub(this.mesh.position);
+  let proj = new Projectile(this.mesh.position.clone(), dir);
+  scene.add(proj.mesh);
+  entities.push(proj);
+}
+
+Shooter.prototype.isDead = function() {
+  return false;
+}
+
+/******************************************************************************/
+/**                      PROJECTILE                                          **/
+/**                                                                          **/
+/******************************************************************************/
+function Projectile(position, velocity) {
+  this.shape = new THREE.Shape();
+  this.shape.moveTo(0,0);
+  this.shape.lineTo(1,0);
+  this.shape.lineTo(1,1);
+  this.shape.lineTo(0,0);
+  // Define the shape here
+
+  this.geometry = new THREE.ShapeGeometry(this.shape);
+  this.material = new THREE.MeshLambertMaterial({color: 0x662222});
+  this.mesh     = new THREE.Mesh(this.geometry, this.material)
+  this.mesh.position.copy(position);          // current position
+  this.mesh.scale.multiplyScalar(15);
+
+  this.velocity = velocity.clone().normalize();   // normalized direction of travel
+  this.speed = 8;                                // speed to scale velocity by
+  this.velocity.multiplyScalar(this.speed);
+
+  this.spawnTime = time;
+  this.timeToLive = 4500;
+  this.despawnTime = this.spawnTime + this.timeToLive;
+
+  this.dead = false;
+}
+
+// Function to animate the projectile every frame.
+Projectile.prototype.animate = function() {
+  this.mesh.position.add(this.velocity);
+  this.mesh.rotation.z += 0.1;
+
+  // Check for intersection with player
+  let playerBox = new THREE.Box3().setFromObject(player.mesh);
+  let meBox = new THREE.Box3().setFromObject(this.mesh);
+
+  if (playerBox.intersectsBox(meBox)) {
+    console.log("hit player");
+    this.dead = true;
+  }
+}
+
+Projectile.prototype.isDead = function() {
+  if (time > this.despawnTime) this.dead = true;
+  return this.dead;
+}

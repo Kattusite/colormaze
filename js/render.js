@@ -8,38 +8,14 @@
 var renderer, scene, origin;
 
 // Current system time in milliseconds
-var time;
+// var time; // Moved to core.js
 
-// Objectives and their current state of unlockedness
-var objectives = {
-  objPulse:   false,
-  objPart:    false,
-  gray:       false,
-  red:        false,
-  green:      false,
-  blue:       false,
-  bit2:       false,
-  bit4:       false,
-  bit8:       false,
-};
 
 // Particles and projectiles currently living in the scene.
 // Projectiles can hit the player, particles can't.
+var entities = [];
 var particles = [];
 var projectiles = [];
-
-// Lighting objects
-var ambientWhite  = new THREE.AmbientLight(0xffffff, 0.5);
-var ambientRed    = new THREE.AmbientLight(0xff0000, 0.5);
-var ambientGreen  = new THREE.AmbientLight(0x00ff00, 0.5);
-var ambientBlue   = new THREE.AmbientLight(0x0000ff, 0.5);
-
-var pointWhite = new THREE.PointLight(0xffffff, 0.5);
-
-// Camera objects
-var camera; // The camera currently being used (either camera2d, camera3d)
-var camera2d; // The 2d orthographic camera
-var camera3d; // The 3d perspective camera
 
 // Geometry and mesh objects
 var geometry, material, mesh;
@@ -48,81 +24,6 @@ var geometry, material, mesh;
 const NEAR = 0.1;
 const FAR = 3000;
 
-// Are we using the 2d or 3d camera?
-var flat = false;
-
-// Keys Pressed at any given moment
-var keysPressed = {};
-
-// Movement speed
-const speed = 10;
-
-
-/******************************************************************************/
-/**                      ACTIONS  & KEYBINDINGS                              **/
-/**                                                                          **/
-/******************************************************************************/
-// Possible action types
-// MOVE: Move the player cube by its speed as long as key is held
-const MOVE    = "move";
-
-// SHIFT: Change from 2d to 3d camera and vice versa.
-const SHIFT   = "change perspective";
-
-// ADD/REM_LIGHT: Add or remove a light from the scene
-const ADD_LIGHT = "add light";
-const REM_LIGHT = "remove light";
-
-// Actions that happen in every frame the key is held
-const CONTINUING_ACTIONS = [MOVE];
-
-// Actions that happen once every time the key is pushed and released
-const INSTANT_ACTIONS = [SHIFT, ADD_LIGHT, REM_LIGHT];
-
-// Definitions of all the actions
-const ACTIONS = [
-  // Move up
-  {
-    boundKeys:    ["ArrowUp", "w"],
-    type:         MOVE,
-    vector:       new THREE.Vector3(0, speed, 0)
-  },
-  // Move Down
-  {
-    boundKeys:    ["ArrowDown", "s"],
-    type:         MOVE,
-    vector:       new THREE.Vector3(0, -speed, 0)
-  },
-  // Move left
-  {
-    boundKeys:    ["ArrowLeft", "a"],
-    type:         MOVE,
-    vector:       new THREE.Vector3(-speed, 0, 0)
-  },
-  // Move right
-  {
-    boundKeys:    ["ArrowRight", "d"],
-    type:         MOVE,
-    vector:       new THREE.Vector3(speed, 0, 0)
-  },
-  {
-    boundKeys:    ["o"],
-    type:         SHIFT
-  },
-  {
-    boundKeys:    ["-"],
-    type:         REM_LIGHT,
-    light:        pointWhite
-  },
-  {
-    boundKeys:    ["="],
-    type:         ADD_LIGHT,
-    light:        pointWhite
-  }
-];
-
-const KEY_BINDINGS = {};
-
 /******************************************************************************/
 /**                      INITIALIZERS                                        **/
 /**                                                                          **/
@@ -130,6 +31,8 @@ const KEY_BINDINGS = {};
 
 // Initialize the document, handlers, and renderer
 function init() {
+  time = Date.now();
+
   initRenderer();
   $("body").keydown(handleKeydown);
   $("body").keyup(handleKeyup);
@@ -173,10 +76,13 @@ function initRenderer() {
   // Add lights (playing with these leads to super cool effects)
   scene.add(ambientWhite);
 
-
   // ==================== SET UP THE SCENE ===========================
   // (move this to its own function or file eventually)
   // Add a cube to the scene
+  player = new Player();
+  scene.add(player.mesh);
+  // entities.push(player);
+
   geometry = new THREE.CubeGeometry(50,50,50);
   material = new THREE.MeshLambertMaterial({color: 0xFFFFFF});
   mesh = new THREE.Mesh(geometry, material);
@@ -188,7 +94,12 @@ function initRenderer() {
   let mesh1 = new THREE.Mesh(geometry1, material1);
   mesh1.position.set(0,0,-1100);
 
-  scene.add(mesh);
+  let shooter = new Shooter(500, 500, -1000);
+  scene.add(shooter.mesh);
+  entities.push(shooter);
+
+
+  // scene.add(mesh);
   scene.add(mesh1);
 
   // Disable colors that aren't yet unlocked
@@ -202,48 +113,38 @@ function initRenderer() {
 
 // Render a scene (many times per second)
 function render() {
-
-  let boundingBox = getScreenBoundingBox();
   time = Date.now();
 
-  // Trigger all actions for keys that are pressed down
-  for (let key in keysPressed) {
-    if (!KEY_BINDINGS[key]) continue;
-    let action = KEY_BINDINGS[key];
+  // Animate the player
+  player.animate();
 
-    // Decide what to do based on the action type
-    if (action.type === MOVE) {
-      // Move the cube
-      mesh.position.add(action.vector);
+  // Loop over all entities, animating them, and culling out any that died
+  let newEntities = [];
+  for (let entity of entities) {
+    entity.animate();
 
-      // We probably want to move both cameras too, leaving the rest of scene behind
-      if (!boundingBox.containsPoint(mesh.position)) {
-        objectives["objPulse"] = true;
-        camera2d.position.add(action.vector);
-        camera3d.position.add(action.vector);
-      }
-
-      // Make sure the cube doesn't leave the viewable area (a little buggy still)
-      //mesh.position.clamp(boundingBox.min, boundingBox.max);
-    }
-
-
+    // Remove dead entities, preserve living entities
+    if (entity.isDead())    scene.remove(entity.mesh);
+    else                    newEntities.push(entity);
   }
-
-  // Rotate the cube a little bit (it looks like it's bouncing, sort of...)
-  // mesh.rotation.x += 0.02;
-  if (objectives["objPulse"]) {
-    let scale = Math.max(1, 1.075 * Math.sin(time / 175));
-    mesh.scale.set(scale, scale, scale);
-  }
+  entities = newEntities;
 
   // Update all colors
-  // Not needed as long as we call toggleColor() every time we want to add/remove a new color
-  // updateColors();
+  // Not needed as long as colors are toggled and no new objs added
+  updateColors();
 
   // Render the scene repeatedly
   renderer.render(scene, camera);
   requestAnimationFrame(render);
+}
+
+// For debugging, enable all possible objective features
+function unlockAllObjectives() {
+  for (let obj in objectives) {
+    objectives[obj] = true;
+  }
+
+  updateColors();
 }
 
 // Toggle (lock/unlock) the color of the given name
@@ -332,7 +233,6 @@ function getScreenBoundingBox() {
 }
 
 
-
 /******************************************************************************/
 /**                      EVENT HANDLERS                                      **/
 /**                                                                          **/
@@ -381,6 +281,9 @@ function handleKeypress(event) {
   }
   else if (action.type == REM_LIGHT) {
     scene.remove(action.light);
+  }
+  else if (action.type == UNLOCK_ALL) {
+    unlockAllObjectives();
   }
 }
 
