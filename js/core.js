@@ -52,9 +52,6 @@ var objectives = {
 // The player object
 var player;
 
-// Movement speed
-const speed = 10;
-
 /******************************************************************************/
 /**                      ACTIONS  & KEYBINDINGS                              **/
 /**                                                                          **/
@@ -87,25 +84,25 @@ const ACTIONS = [
   {
     boundKeys:    ["ArrowUp", "w"],
     type:         MOVE,
-    vector:       new THREE.Vector3(0, speed, 0)
+    vector:       new THREE.Vector3(0, 1, 0)
   },
   // Move Down
   {
     boundKeys:    ["ArrowDown", "s"],
     type:         MOVE,
-    vector:       new THREE.Vector3(0, -speed, 0)
+    vector:       new THREE.Vector3(0, -1, 0)
   },
   // Move left
   {
     boundKeys:    ["ArrowLeft", "a"],
     type:         MOVE,
-    vector:       new THREE.Vector3(-speed, 0, 0)
+    vector:       new THREE.Vector3(-1, 0, 0)
   },
   // Move right
   {
     boundKeys:    ["ArrowRight", "d"],
     type:         MOVE,
-    vector:       new THREE.Vector3(speed, 0, 0)
+    vector:       new THREE.Vector3(1, 0, 0)
   },
   {
     boundKeys:    ["o"],

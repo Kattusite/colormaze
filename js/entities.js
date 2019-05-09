@@ -13,14 +13,22 @@
 
 
 function Player() {
+  this.origColor = 0xFFFFFF;
   this.geometry = new THREE.CubeGeometry(50,50,50);
-  this.material = new THREE.MeshLambertMaterial({color: 0xFFFFFF});
+  this.material = new THREE.MeshLambertMaterial({color: this.origColor});
   this.mesh = new THREE.Mesh(this.geometry, this.material);
   this.mesh.position.add(new THREE.Vector3(0,0,-1000));
 
   this.position = this.mesh.position;
 
-  this.health = 100;
+  // How quickly does the player move?
+  this.speed = 10;
+
+  //
+
+  // How much health does the player have?
+  this.maxHealth = 100;
+  this.health = this.maxHealth;
 }
 
 Player.prototype.animate = function() {
@@ -33,13 +41,14 @@ Player.prototype.animate = function() {
 
     // If a move action is active, move the player in the relevant direction.
     if (action.type === MOVE) {
-      this.mesh.position.add(action.vector);
+      let motion = action.vector.clone().multiplyScalar(this.speed);
+      this.mesh.position.add(motion);
 
       // If player strays out of central bounding box, chase them with camera
       if (!boundingBox.containsPoint(this.mesh.position)) {
         objectives["objPulse"] = true;
-        camera2d.position.add(action.vector);
-        camera3d.position.add(action.vector);
+        camera2d.position.add(motion);
+        camera3d.position.add(motion);
       }
     }
   }
@@ -47,10 +56,16 @@ Player.prototype.animate = function() {
   // Add the pulsate/heartbeat effect to the player's mesh.
   if (objectives["objPulse"]) {
     let scale = Math.max(1, 1.075 * Math.sin(time / 175));
-    mesh.scale.set(scale, scale, scale);
+    this.mesh.scale.set(scale, scale, scale);
   }
 
   this.position = this.mesh.position;
+}
+
+// Hit the player for dmg points of damage
+Player.prototype.hitFor = function(dmg) {
+  this.health -= dmg;
+  if (this.health < 0) this.health = 0;
 }
 
 Player.prototype.isDead = function() {
@@ -115,27 +130,41 @@ Shooter.prototype.isDead = function() {
 /**                                                                          **/
 /******************************************************************************/
 function Projectile(position, velocity) {
+  // Define the shape of the projectile
+  let a = 0.4; // inner size of star
+  let b = 1.0;  // outer size of star
+  let scale = 10;
   this.shape = new THREE.Shape();
-  this.shape.moveTo(0,0);
-  this.shape.lineTo(1,0);
-  this.shape.lineTo(1,1);
-  this.shape.lineTo(0,0);
-  // Define the shape here
+  this.shape.moveTo(a,0);
+  this.shape.lineTo(b,b);
+  this.shape.lineTo(0,a);
+  this.shape.lineTo(-b,b);
+  this.shape.lineTo(-a,0);
+  this.shape.lineTo(-b,-b);
+  this.shape.lineTo(0,-a);
+  this.shape.lineTo(b,-b);
+  this.shape.lineTo(a,0);
 
+  // Define the mesh of the projectile
   this.geometry = new THREE.ShapeGeometry(this.shape);
   this.material = new THREE.MeshLambertMaterial({color: 0x662222});
   this.mesh     = new THREE.Mesh(this.geometry, this.material)
   this.mesh.position.copy(position);          // current position
-  this.mesh.scale.multiplyScalar(15);
+  this.mesh.scale.multiplyScalar(scale);
 
+  // Define velocity
   this.velocity = velocity.clone().normalize();   // normalized direction of travel
-  this.speed = 8;                                // speed to scale velocity by
-  this.velocity.multiplyScalar(this.speed);
+  this.speed = 8;                                 // speed to scale velocity by
+  this.velocity.multiplyScalar(this.speed);       // actual velocity vector
 
+  this.damage = 10; // how much damage is inflicted on hit
+
+  // Define travel time and despawn time
   this.spawnTime = time;
   this.timeToLive = 4500;
   this.despawnTime = this.spawnTime + this.timeToLive;
 
+  // Has the projectile struck an object or expired?
   this.dead = false;
 }
 
@@ -149,7 +178,8 @@ Projectile.prototype.animate = function() {
   let meBox = new THREE.Box3().setFromObject(this.mesh);
 
   if (playerBox.intersectsBox(meBox)) {
-    console.log("hit player");
+    // console.log("hit player");
+    player.hitFor(this.damage);
     this.dead = true;
   }
 }
