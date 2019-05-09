@@ -66,6 +66,14 @@ Player.prototype.animate = function() {
 Player.prototype.hitFor = function(dmg) {
   this.health -= dmg;
   if (this.health < 0) this.health = 0;
+
+  // TODO: Quicken pulsing as health lowers
+
+  // TODO: Darken color as health lowers
+  let healthPercent = this.health / this.maxHealth;
+  let newColor = new THREE.Color(this.origColor).offsetHSL(0,0,-(1-healthPercent));
+  this.material.color.copy(newColor);
+  this.material.trueColor.copy(newColor);
 }
 
 Player.prototype.isDead = function() {

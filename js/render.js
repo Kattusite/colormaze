@@ -14,8 +14,10 @@ var renderer, scene, origin;
 // Particles and projectiles currently living in the scene.
 // Projectiles can hit the player, particles can't.
 var entities = [];
-var particles = [];
-var projectiles = [];
+// var particles = [];
+// var projectiles = [];
+
+var activeLights = {};
 
 // Geometry and mesh objects
 var geometry, material, mesh;
@@ -55,7 +57,7 @@ function initKeybindings() {
 function initRenderer() {
   // Initialize the WebGL renderer
   renderer = new THREE.WebGLRenderer({canvas: $('#gameCanvas')[0], antialias: true});
-  renderer.setClearColor(0x111111);
+  renderer.setClearColor(0x555555);
   renderer.setPixelRatio(window.devicePixelRatio);
 
   let width = window.innerWidth;
@@ -68,13 +70,15 @@ function initRenderer() {
   camera3d = new THREE.PerspectiveCamera(35, width/height, NEAR, FAR);
   //camera2d.position.set(0,10,0);
   //camera3d.position.set(0,10,0);
-  camera = camera3d;
+  if (flat) camera = camera2d;
+  else      camera = camera3d;
 
   scene = new THREE.Scene();
   origin = new THREE.Vector3(0, 0, 0);
 
   // Add lights (playing with these leads to super cool effects)
   scene.add(ambientWhite);
+  activeLights[ambientWhite.uuid] = ambientWhite;
 
   // ==================== SET UP THE SCENE ===========================
   // (move this to its own function or file eventually)
@@ -218,6 +222,13 @@ function updateColors() {
   }
 }
 
+function normalizeLights() {
+  let keys = Object.keys(activeLights);
+  for (let key of keys) {
+    activeLights[key].intensity = 1 / keys.length;
+  }
+}
+
 // Return a bounding box representing objects in the orthographic viewing frustum
 function getScreenBoundingBox() {
   let w = window.innerWidth;
@@ -277,10 +288,28 @@ function handleKeypress(event) {
     else      camera = camera3d;
   }
   else if (action.type == ADD_LIGHT) {
+    let uuid = action.light.uuid;
+
+    // Do nothing if light already in scene
+    if (activeLights[uuid]) return;
+
     scene.add(action.light);
+    activeLights[uuid] = action.light;
+
+    // Normalize lights to have intensity 1
+    normalizeLights();
   }
   else if (action.type == REM_LIGHT) {
+    let uuid = action.light.uuid;
+
+    // Do nothing if light not already in scene
+    if (!activeLights[uuid]) return;
+
     scene.remove(action.light);
+    delete activeLights[uuid];
+
+    // Normalize lights to have intensity 1
+    normalizeLights();
   }
   else if (action.type == UNLOCK_ALL) {
     unlockAllObjectives();

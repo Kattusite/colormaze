@@ -13,7 +13,7 @@
 var time;
 
 // Are we using the 2d or 3d camera?
-var flat = false;
+var flat = true;
 
 // Camera objects
 var camera; // The camera currently being used (either camera2d, camera3d)
@@ -21,13 +21,13 @@ var camera2d; // The 2d orthographic camera
 var camera3d; // The 3d perspective camera
 
 // Ambient Lights
-var ambientWhite  = new THREE.AmbientLight(0xffffff, 0.5);
-var ambientRed    = new THREE.AmbientLight(0xff0000, 0.5);
-var ambientGreen  = new THREE.AmbientLight(0x00ff00, 0.5);
-var ambientBlue   = new THREE.AmbientLight(0x0000ff, 0.5);
+var ambientWhite  = new THREE.AmbientLight(0xffffff, 1);
+var ambientRed    = new THREE.AmbientLight(0xff0000, 1);
+var ambientGreen  = new THREE.AmbientLight(0x00ff00, 1);
+var ambientBlue   = new THREE.AmbientLight(0x0000ff, 1);
 
 // Point Lights
-var pointWhite = new THREE.PointLight(0xffffff, 0.5);
+var pointWhite = new THREE.PointLight(0xffffff, 1);
 
 
 /******************************************************************************/
