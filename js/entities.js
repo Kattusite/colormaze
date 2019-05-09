@@ -5,6 +5,27 @@
 /******************************************************************************/
 // Entities are expected to implement .animate() and .isAlive()
 
+// Returns the THREE.Box3() representing the bounding box around an entity
+function getHitbox() {
+  let hitbox = new THREE.Box3().setFromObject(this.mesh);
+  return hitbox;
+}
+
+// Returns true if an entity is currently intersecting any wall
+// WARNING: Slow! Has to check every wall -- we should optimize if not fast enough
+// If a wall is intersected, sets this.wallSpeed to the wall's speed
+// Else, sets it to 1
+function intersectsWall() {
+  let hitbox = this.getHitbox();
+  for (wall of walls) {
+    if (wall.intersectsHitbox(hitbox)) {
+      this.wallSpeed = wall.speed;
+      return true;
+    }
+  }
+  this.wallSpeed = 1;
+  return false;
+}
 
 /******************************************************************************/
 /**                      Player                                              **/
@@ -44,6 +65,16 @@ Player.prototype.animate = function() {
       let motion = action.vector.clone().multiplyScalar(this.speed);
       this.mesh.position.add(motion);
 
+      // If player would have hit a wall, revert the motion and continue
+      if (this.intersectsWall()) {
+        // NOTE: Instead of subtracting whole motion we can subtract
+        // some fraction of it to give the effect of slowing down or
+        // speeding up the cube
+        motion.multiplyScalar(1 - this.wallSpeed);
+        this.mesh.position.sub(motion);
+        continue;
+      }
+
       // If player strays out of central bounding box, chase them with camera
       if (!boundingBox.containsPoint(this.mesh.position)) {
         objectives["objPulse"] = true;
@@ -62,6 +93,9 @@ Player.prototype.animate = function() {
   this.position = this.mesh.position;
 }
 
+Player.prototype.getHitbox = getHitbox;
+Player.prototype.intersectsWall = intersectsWall;
+
 // Hit the player for dmg points of damage
 Player.prototype.hitFor = function(dmg) {
   this.health -= dmg;
@@ -74,6 +108,11 @@ Player.prototype.hitFor = function(dmg) {
   let newColor = new THREE.Color(this.origColor).offsetHSL(0,0,-(1-healthPercent));
   this.material.color.copy(newColor);
   this.material.trueColor.copy(newColor);
+}
+
+// Heal the player for hp points of health
+Player.prototype.healFor = function(hp) {
+  this.hitFor(-hp);
 }
 
 Player.prototype.isDead = function() {
@@ -120,6 +159,10 @@ Shooter.prototype.animate = function() {
 
   this.position = this.mesh.position;
 }
+
+Shooter.prototype.getHitbox = getHitbox;
+Shooter.prototype.intersectsWall = intersectsWall;
+
 
 // Fire a projectile at a target location
 Shooter.prototype.fireAt = function(target) {
@@ -181,13 +224,14 @@ Projectile.prototype.animate = function() {
   this.mesh.position.add(this.velocity);
   this.mesh.rotation.z += 0.1;
 
-  // Check for intersection with player
-  let playerBox = new THREE.Box3().setFromObject(player.mesh);
-  let meBox = new THREE.Box3().setFromObject(this.mesh);
-
-  if (playerBox.intersectsBox(meBox)) {
+  if (this.getHitbox().intersectsBox(player.getHitbox())) {
     // console.log("hit player");
     player.hitFor(this.damage);
+    this.dead = true;
+  }
+
+  // If projectile hits a wall, kill it
+  if (this.intersectsWall()) {
     this.dead = true;
   }
 }
@@ -196,3 +240,6 @@ Projectile.prototype.isDead = function() {
   if (time > this.despawnTime) this.dead = true;
   return this.dead;
 }
+
+Projectile.prototype.getHitbox = getHitbox;
+Projectile.prototype.intersectsWall = intersectsWall;

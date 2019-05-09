@@ -9,6 +9,14 @@
 /**                               RENDERER                                   **/
 /**                                                                          **/
 /******************************************************************************/
+// Renderer + Scene objects
+var renderer, scene;
+
+// Entities (shooters, projectiles), Walls, and Lights currently in scene
+var entities = [];
+var walls = [];
+var activeLights = {};
+
 // The current time in ms
 var time;
 
@@ -28,6 +36,9 @@ var ambientBlue   = new THREE.AmbientLight(0x0000ff, 1);
 
 // Point Lights
 var pointWhite = new THREE.PointLight(0xffffff, 1);
+
+// Z-coordinate of the "floor" of the simulation
+const FLOOR_Z = -1000;
 
 
 /******************************************************************************/

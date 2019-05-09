@@ -4,26 +4,10 @@
 /**                                                                          **/
 /******************************************************************************/
 
-// Renderer + Scene objects
-var renderer, scene, origin;
+
 
 // Current system time in milliseconds
 // var time; // Moved to core.js
-
-
-// Particles and projectiles currently living in the scene.
-// Projectiles can hit the player, particles can't.
-var entities = [];
-// var particles = [];
-// var projectiles = [];
-
-var activeLights = {};
-
-// Walls/collision objects
-var walls = [];
-
-// Geometry and mesh objects
-var geometry, material, mesh;
 
 // Near and far viewing plane constants
 const NEAR = 0.1;
@@ -77,7 +61,6 @@ function initRenderer() {
   else      camera = camera3d;
 
   scene = new THREE.Scene();
-  origin = new THREE.Vector3(0, 0, 0);
 
   // Add lights (playing with these leads to super cool effects)
   scene.add(ambientWhite);
@@ -90,11 +73,13 @@ function initRenderer() {
   scene.add(player.mesh);
   // entities.push(player);
 
+  /*
   geometry = new THREE.CubeGeometry(50,50,50);
   material = new THREE.MeshLambertMaterial({color: 0xFFFFFF});
   mesh = new THREE.Mesh(geometry, material);
   mesh.position.set(0,0,-1000);
-
+  */
+  let material = new THREE.MeshLambertMaterial({color: 0xFFFFFF});
 
   let geometry1 = new THREE.PlaneGeometry(300, 300, 1, 1);
   let material1 = new THREE.MeshLambertMaterial({color: 0x447777});
@@ -106,34 +91,58 @@ function initRenderer() {
   entities.push(shooter);
 
   // create 4 basic walls (heights and relative positions can be changed later)
-  let geometry2 = new THREE.BoxGeometry(30, 400, 80, 1);
-  let wallMesh1 = new THREE.Mesh(geometry2, material);
-  wallMesh1.position.set(-800, 0, -1000);
-  walls.push(wallMesh1);
+  let wall;
+  wall = new Wall({
+    length: 30,
+    thickness: 400,
+    height: 80,
+    position: new THREE.Vector3(-800, 0, -1000)
+  });
+  walls.push(wall);
+  scene.add(wall.mesh);
 
-  let geometry3 = new THREE.BoxGeometry(20, 700, 80, 1);
-  let wallMesh2 = new THREE.Mesh(geometry3, material);
-  wallMesh2.position.set(800, 0, -1000);
-  walls.push(wallMesh2);
+  wall = new Wall({
+    length: 20,
+    thickness: 700,
+    height: 80,
+    position: new THREE.Vector3(800, 0, -1000)
+  });
+  walls.push(wall);
+  scene.add(wall.mesh);
 
-  let geometry4 = new THREE.BoxGeometry(500, 50, 80, 1);
-  let wallMesh3 = new THREE.Mesh(geometry4, material);
-  wallMesh3.position.set(0, -500, -1000);
-  walls.push(wallMesh3);
+  wall = new Wall({
+    length: 500,
+    thickness: 50,
+    height: 80,
+    position: new THREE.Vector3(0, -500, -1000)
+  });
+  walls.push(wall);
+  scene.add(wall.mesh);
 
-  let geometry5 = new THREE.BoxGeometry(300, 40, 80, 1);
-  let wallMesh4 = new THREE.Mesh(geometry5, material);
-  wallMesh4.position.set(100, 400, -1000);
-  walls.push(wallMesh4);
+  wall = new Wall({
+    length: 300,
+    thickness: 40,
+    height: 80,
+    position: new THREE.Vector3(100, 400, -1000)
+  });
+  walls.push(wall);
+  scene.add(wall.mesh);
+
+
+  // Wall testing: remove me later
+  let wall42 = new Wall({
+    start: new THREE.Vector3(150,500,FLOOR_Z),
+    end:   new THREE.Vector3(150,0,FLOOR_Z),
+    // height: 200,
+    // thickness: 20,
+  });
+  scene.add(wall42.mesh);
+  walls.push(wall42);
 
 
   // scene.add(mesh);
   scene.add(mesh1);
 
-  scene.add(wallMesh1);
-  scene.add(wallMesh2);
-  scene.add(wallMesh3);
-  scene.add(wallMesh4);
 
   // Disable colors that aren't yet unlocked
   updateColors();
@@ -144,6 +153,10 @@ function initRenderer() {
   requestAnimationFrame(render);
 }
 
+/******************************************************************************/
+/**                      INITIALIZERS                                        **/
+/**                                                                          **/
+/******************************************************************************/
 // Render a scene (many times per second)
 function render() {
   time = Date.now();
@@ -170,6 +183,12 @@ function render() {
   renderer.render(scene, camera);
   requestAnimationFrame(render);
 }
+
+
+/******************************************************************************/
+/**                      HELPERS                                             **/
+/**                                                                          **/
+/******************************************************************************/
 
 // For debugging, enable all possible objective features
 function unlockAllObjectives() {
