@@ -96,7 +96,8 @@ function initRenderer() {
     length: 30,
     thickness: 400,
     height: 80,
-    position: new THREE.Vector3(-800, 0, -1000)
+    position: new THREE.Vector3(-800, 0, -1000),
+    color: 0x4182ea
   });
   walls.push(wall);
   scene.add(wall.mesh);
@@ -105,7 +106,8 @@ function initRenderer() {
     length: 20,
     thickness: 700,
     height: 80,
-    position: new THREE.Vector3(800, 0, -1000)
+    position: new THREE.Vector3(800, 0, -1000),
+    color: 0x41ea74
   });
   walls.push(wall);
   scene.add(wall.mesh);
@@ -114,7 +116,8 @@ function initRenderer() {
     length: 500,
     thickness: 50,
     height: 80,
-    position: new THREE.Vector3(0, -500, -1000)
+    position: new THREE.Vector3(0, -500, -1000),
+    color: 0xea9641,
   });
   walls.push(wall);
   scene.add(wall.mesh);
@@ -123,7 +126,8 @@ function initRenderer() {
     length: 300,
     thickness: 40,
     height: 80,
-    position: new THREE.Vector3(100, 400, -1000)
+    position: new THREE.Vector3(100, 400, -1000),
+    color: 0xea41bd
   });
   walls.push(wall);
   scene.add(wall.mesh);
@@ -135,11 +139,15 @@ function initRenderer() {
     end:   new THREE.Vector3(150,0,FLOOR_Z),
     // height: 200,0
     // thickness: 20,
-    color: 0x884444,
+    color: 0x884444
   });
   scene.add(wall42.mesh);
   walls.push(wall42);
 
+  // Add objective pickups to the scene
+  let grayscaleObjective = new Objective(new THREE.Vector3(-500,-500, FLOOR_Z), 0x808080, "gray");
+  entities.push(grayscaleObjective);
+  scene.add(grayscaleObjective.mesh);
 
   // scene.add(mesh);
   scene.add(mesh1);
@@ -295,7 +303,7 @@ function updateColors() {
     if (hex == 0) {
       let l = ((r+g+b) / 255.0) / 3.0;
 
-      if (!objectives.grey) l = Math.round(l);
+      if (!objectives.gray) l = Math.round(l);
 
       object.material.color = new THREE.Color(l,l,l);
       continue;

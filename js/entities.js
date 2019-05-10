@@ -243,3 +243,44 @@ Projectile.prototype.isDead = function() {
 
 Projectile.prototype.getHitbox = getHitbox;
 Projectile.prototype.intersectsWall = intersectsWall;
+
+/******************************************************************************/
+/**                      OBJECTIVE                                           **/
+/**                                                                          **/
+/******************************************************************************/
+function Objective(position, color, unlock) {
+
+  // Define the mesh of the projectile
+  this.geometry = new THREE.TorusKnotGeometry(15, 5, 100, 16);
+  this.material = new THREE.MeshPhongMaterial({color: color});
+  this.material.showTrueColor = true;
+
+  this.mesh = new THREE.Mesh(this.geometry, this.material)
+  this.mesh.position.copy(position); // current position
+
+  // Has the objective been collected
+  this.unlock = unlock;
+  this.dead = false;
+}
+
+// Function to animate the projectile every frame.
+Objective.prototype.animate = function() {
+  this.mesh.rotation.z += 0.1;
+
+  // When collected by a player
+  if (this.getHitbox().intersectsBox(player.getHitbox())) {
+    objectives[this.unlock] = true;
+
+    // Update anything that might need to get updated when objectives change
+    updateColors();
+
+    this.dead = true;
+  }
+}
+
+Objective.prototype.isDead = function() {
+  return this.dead;
+}
+
+Objective.prototype.getHitbox = getHitbox;
+Objective.prototype.intersectsWall = intersectsWall;
