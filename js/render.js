@@ -150,10 +150,10 @@ function initRenderer() {
   scene.add(particleSystem);
   options = {
     position: new THREE.Vector3(),
-    positionRandomness: 1,
+    positionRandomness: 0.4,
     velocity: new THREE.Vector3(),
     velocityRandomness: .5,
-    color: 0xaa88ff,
+    color: 0x22ff88,
     colorRandomness: .2,
     turbulence: .5,
     lifetime: 4,
