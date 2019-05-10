@@ -306,24 +306,13 @@ function updateColors() {
       if (!objectives.blue)   hex = hex & NO_BLU;
     }
 
-    // If filtered to black, but not orig. black, and we are rendering in grayscale:
-    let grayscale = false;
     let L = Math.round(hsl.l * 255);
-    /*
-    if (hex == 0 && origHex != 0 && objectives.gray) {
-        r = L;
-        g = L;
-        b = L;
-        grayscale = true;
-    }
-    else { */
+
     r = (hex & RED) >>> 16;
     g = (hex & GRN) >>> 8;
     b = (hex & BLU);
-    //}
 
-
-    // Given r,g,b in 0,255 return new color that is dithered
+    // Given r,g,b in 0,255 return new color that is dithered to depth bits
     let ditherRGB = function(r,g,b,depth) {
       r /= 256;
       g /= 256;
@@ -340,18 +329,22 @@ function updateColors() {
       return new THREE.Color(dithR, dithG, dithB);
     }
 
+    // Figure out what color depth is allowed for R,G,B
     let colorDepth;
     if      (!objectives.bit2) colorDepth = 2;
     else if (!objectives.bit4) colorDepth = 4;
     else if (!objectives.bit8) colorDepth = 16;
     else                       colorDepth = 256;
 
+    // Figure out what color depth is allowed for grayscale
     let grayColorDepth = Math.max(colorDepth, 8);
 
+    // Find the grayscale and RGB colors
     let grayscaleColor = ditherRGB(L,L,L, grayColorDepth);
     let standardColor  = ditherRGB(r,g,b, colorDepth);
     let retColor = standardColor;
 
+    // If filtered to black, but not orig. black, and we are rendering in grayscale:
     if (objectives.gray && origHex != 0 && standardColor.getHex() == 0) {
       retColor = grayscaleColor;
     }
