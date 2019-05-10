@@ -291,6 +291,8 @@ function updateColors() {
     if (!object.material.trueColor) object.material.trueColor = object.material.color.clone();
 
     let hex = object.material.trueColor.getHex();
+    let origHex = hex;
+    let r, g, b;
 
     // New idea:
     let hsl = {}
@@ -304,11 +306,20 @@ function updateColors() {
       if (!objectives.blue)   hex = hex & NO_BLU;
     }
 
-    // Dither down to enabled fidelity
-    let r = (hex & RED) >>> 16;
-    let g = (hex & GRN) >>> 8;
-    let b = (hex & BLU);
+    // If filtered to black, but not orig. black, and we are rendering in grayscale:
+    if (hex == 0 && origHex != 0 && objectives.gray) {
+      let L = Math.round(hsl.l * 255);
+        r = L;
+        g = L;
+        b = L;
+    }
+    else {
+      r = (hex & RED) >>> 16;
+      g = (hex & GRN) >>> 8;
+      b = (hex & BLU);
+    }
 
+    // Dither down to enabled fidelity
     r /= 256;
     g /= 256;
     b /= 256;
