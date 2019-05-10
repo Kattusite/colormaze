@@ -49,15 +49,24 @@ const FLOOR_Z = -1000;
 /******************************************************************************/
 // Objectives and their current state of unlockedness
 var objectives = {
-  pulse:      false,
-  particles:  false,
-  gray:       false,
-  red:        false,
-  green:      false,
-  blue:       false,
-  bit2:       false,
-  bit4:       false,
-  bit8:       false,
+  // Player options
+  pulse:          false,
+  particles:      false,
+  // Camera + light options
+  lighting:       false,
+  perspective:    false,
+  perspective2:   false,
+  // Color options
+  gray:           false,
+  red:            false,
+  green:          false,
+  blue:           false,
+  bit2:           false,
+  bit4:           false,
+  bit8:           false,
+  // Stretch goals
+  sounds:         false,
+  jump:           false
 };
 
 

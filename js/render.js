@@ -44,7 +44,7 @@ function initKeybindings() {
 function initRenderer() {
   // Initialize the WebGL renderer
   renderer = new THREE.WebGLRenderer({canvas: $('#gameCanvas')[0], antialias: true});
-  renderer.setClearColor(0x555555);
+  renderer.setClearColor(0x554455);
   renderer.setPixelRatio(window.devicePixelRatio);
 
   let width = window.innerWidth;
@@ -267,6 +267,30 @@ function toggleColor(color) {
 }
 
 
+// Given r,g,b in 0,255 return new color that is dithered to depth bits
+// If isFloat is true, treat inputs as [0,1] instead of 0,255
+let ditherRGB = function(r,g,b,depth, isFloat) {
+  if (isFloat) {
+    r *= 255;
+    g *= 255;
+    b *= 255;
+  }
+
+  r /= 256;
+  g /= 256;
+  b /= 256;
+
+  let dither = function(comp) {
+    return Math.floor(comp * depth) / (depth - 1);
+  }
+
+  let dithR = dither(r);
+  let dithG = dither(g);
+  let dithB = dither(b);
+
+  return new THREE.Color(dithR, dithG, dithB);
+}
+
 // Downscale the quality of colors in the scene to those supported by currently
 // unlocked objectives
 function updateColors() {
@@ -311,23 +335,6 @@ function updateColors() {
     r = (hex & RED) >>> 16;
     g = (hex & GRN) >>> 8;
     b = (hex & BLU);
-
-    // Given r,g,b in 0,255 return new color that is dithered to depth bits
-    let ditherRGB = function(r,g,b,depth) {
-      r /= 256;
-      g /= 256;
-      b /= 256;
-
-      let dither = function(comp) {
-        return Math.floor(comp * depth) / (depth - 1);
-      }
-
-      let dithR = dither(r);
-      let dithG = dither(g);
-      let dithB = dither(b);
-
-      return new THREE.Color(dithR, dithG, dithB);
-    }
 
     // Figure out what color depth is allowed for R,G,B
     let colorDepth;

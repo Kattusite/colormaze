@@ -20,6 +20,11 @@ var SCENE_OBJECTIVES = {
       color: 0x808080,
       tubeSegments: 10,
       radialSegments: 3,
+      animate: function() {
+        let L = (Math.sin(time / 1000) / 2) + 0.5;
+        let newColor = ditherRGB(L,L,L,4, true);
+        this.material.color.copy(newColor);
+      }
     }
   },
   "blue": {
@@ -34,6 +39,11 @@ var SCENE_OBJECTIVES = {
       color: 0x808080,
       tubeSegments: 20,
       radialSegments: 6,
+      animate: function() {
+        let L = (Math.sin(time / 1000) / 2) + 0.5;
+        let newColor = ditherRGB(L,L,L,16, true);
+        this.material.color.copy(newColor);
+      }
     }
   },
   "red": {
@@ -48,6 +58,11 @@ var SCENE_OBJECTIVES = {
       color: 0x808080,
       tubeSegments: 30,
       radialSegments: 9,
+      animate: function() {
+        let L = (Math.sin(time / 1000) / 2) + 0.5;
+        let newColor = ditherRGB(L,L,L,256, true);
+        this.material.color.copy(newColor);
+      }
     }
   },
   "pulse": {
