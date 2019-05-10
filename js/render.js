@@ -144,6 +144,28 @@ function initRenderer() {
   // scene.add(mesh);
   scene.add(mesh1);
 
+  particleSystem = new THREE.GPUParticleSystem({
+    maxParticles: 250000
+  });
+  scene.add(particleSystem);
+  options = {
+    position: new THREE.Vector3(),
+    positionRandomness: 1,
+    velocity: new THREE.Vector3(),
+    velocityRandomness: .5,
+    color: 0xaa88ff,
+    colorRandomness: .2,
+    turbulence: .5,
+    lifetime: 4,
+    size: 30,
+    sizeRandomness: 10
+  };
+  spawnerOptions = {
+      spawnRate: 10000,
+      horizontalSpeed: 1.5,
+      verticalSpeed: 1.33,
+      timeScale: 8
+  };
 
   // Disable colors that aren't yet unlocked
   updateColors();
@@ -179,6 +201,18 @@ function render() {
   // Update all colors
   // Not needed as long as colors are toggled and no new objs added
   updateColors();
+
+  var delta = clock.getDelta() * spawnerOptions.timeScale;
+  tick += delta;
+  if (tick < 0) tick = 0;
+  if (delta > 0) {
+    options.position = player.position;
+    for (let x = 0; x < spawnerOptions.spawnRate * delta; x++) {
+      particleSystem.spawnParticle(options);
+    }
+  }
+  particleSystem.update(tick);
+
 
   // Render the scene repeatedly
   renderer.render(scene, camera);

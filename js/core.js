@@ -19,6 +19,8 @@ var activeLights = {};
 
 // The current time in ms
 var time;
+var clock = new THREE.Clock();
+var tick = 0;
 
 // Are we using the 2d or 3d camera?
 var flat = true;
