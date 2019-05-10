@@ -78,7 +78,6 @@ Player.prototype.animate = function() {
 
       // If player strays out of central bounding box, chase them with camera
       if (!boundingBox.containsPoint(this.mesh.position)) {
-        objectives["objPulse"] = true;
         camera2d.position.add(motion);
         camera3d.position.add(motion);
       }
@@ -86,7 +85,7 @@ Player.prototype.animate = function() {
   }
 
   // Add the pulsate/heartbeat effect to the player's mesh.
-  if (objectives["objPulse"]) {
+  if (objectives["pulse"]) {
     let scale = Math.max(1, 1.075 * Math.sin(time / 175 * this.pulseRate));
     this.mesh.scale.set(scale, scale, scale);
   }

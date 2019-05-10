@@ -49,8 +49,8 @@ const FLOOR_Z = -1000;
 /******************************************************************************/
 // Objectives and their current state of unlockedness
 var objectives = {
-  objPulse:   false,
-  objPart:    false,
+  pulse:      false,
+  particles:  false,
   gray:       false,
   red:        false,
   green:      false,
