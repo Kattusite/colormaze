@@ -160,7 +160,7 @@ function initRenderer() {
     sizeRandomness: 10
   };
   spawnerOptions = {
-      spawnRate: 10000,
+      spawnRate: 2500,
       horizontalSpeed: 1.5,
       verticalSpeed: 1.33,
       timeScale: 8
