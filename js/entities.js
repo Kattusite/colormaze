@@ -100,15 +100,21 @@ Player.prototype.intersectsWall = intersectsWall;
 // Hit the player for dmg points of damage
 Player.prototype.hitFor = function(dmg) {
   this.health -= dmg;
-  if (this.health < 0) this.health = 0;
-
-  // TODO: Quicken pulsing as health lowers
+  if (this.health <= 0) {
+    this.health = 0;
+  }
 
   // TODO: Darken color as health lowers
   let healthPercent = this.health / this.maxHealth;
   let newColor = new THREE.Color(this.origColor).offsetHSL(0,0,-(1-healthPercent));
   this.material.color.copy(newColor);
   this.material.trueColor.copy(newColor);
+
+  // TODO: Quicken pulsing as health lowers
+  this.pulseRate = 1 + 3 * (1 - healthPercent);
+  if (this.health <= 0) {
+    this.pulseRate = 0;
+  }
 }
 
 // Heal the player for hp points of health
