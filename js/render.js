@@ -307,22 +307,38 @@ function updateColors() {
     }
 
     // If filtered to black, but not orig. black, and we are rendering in grayscale:
+    let grayscale = false;
+    let L = Math.round(hsl.l * 255);
+    /*
     if (hex == 0 && origHex != 0 && objectives.gray) {
-      let L = Math.round(hsl.l * 255);
         r = L;
         g = L;
         b = L;
+        grayscale = true;
     }
-    else {
-      r = (hex & RED) >>> 16;
-      g = (hex & GRN) >>> 8;
-      b = (hex & BLU);
-    }
+    else { */
+    r = (hex & RED) >>> 16;
+    g = (hex & GRN) >>> 8;
+    b = (hex & BLU);
+    //}
 
-    // Dither down to enabled fidelity
-    r /= 256;
-    g /= 256;
-    b /= 256;
+
+    // Given r,g,b in 0,255 return new color that is dithered
+    let ditherRGB = function(r,g,b,depth) {
+      r /= 256;
+      g /= 256;
+      b /= 256;
+
+      let dither = function(comp) {
+        return Math.floor(comp * depth) / (depth - 1);
+      }
+
+      let dithR = dither(r);
+      let dithG = dither(g);
+      let dithB = dither(b);
+
+      return new THREE.Color(dithR, dithG, dithB);
+    }
 
     let colorDepth;
     if      (!objectives.bit2) colorDepth = 2;
@@ -330,16 +346,17 @@ function updateColors() {
     else if (!objectives.bit8) colorDepth = 16;
     else                       colorDepth = 256;
 
-    // Given a continuous value in [0,1) return a dithered value in [0,1]
-    let dither = function(comp) {
-      return Math.floor(comp * colorDepth) / (colorDepth - 1);
+    let grayColorDepth = Math.max(colorDepth, 8);
+
+    let grayscaleColor = ditherRGB(L,L,L, grayColorDepth);
+    let standardColor  = ditherRGB(r,g,b, colorDepth);
+    let retColor = standardColor;
+
+    if (objectives.gray && origHex != 0 && standardColor.getHex() == 0) {
+      retColor = grayscaleColor;
     }
 
-    let dithR = dither(r);
-    let dithG = dither(g);
-    let dithB = dither(b);
-
-    object.material.color.copy(new THREE.Color(dithR, dithG, dithB));
+    object.material.color.copy(retColor);
   }
 }
 
