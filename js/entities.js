@@ -45,7 +45,8 @@ function Player() {
   // How quickly does the player move?
   this.speed = 10;
 
-  //
+  // pulse rate, starts at 1
+  this.pulseRate = 1;
 
   // How much health does the player have?
   this.maxHealth = 100;
@@ -86,7 +87,7 @@ Player.prototype.animate = function() {
 
   // Add the pulsate/heartbeat effect to the player's mesh.
   if (objectives["objPulse"]) {
-    let scale = Math.max(1, 1.075 * Math.sin(time / 175));
+    let scale = Math.max(1, 1.075 * Math.sin(time / 175 * this.pulseRate));
     this.mesh.scale.set(scale, scale, scale);
   }
 

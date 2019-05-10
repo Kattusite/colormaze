@@ -158,10 +158,10 @@ function initRenderer() {
   scene.add(particleSystem);
   options = {
     position: new THREE.Vector3(),
-    positionRandomness: 1,
+    positionRandomness: 0.4,
     velocity: new THREE.Vector3(),
     velocityRandomness: .5,
-    color: 0xaa88ff,
+    color: 0x22ff88,
     colorRandomness: .2,
     turbulence: .5,
     lifetime: 4,
@@ -169,7 +169,7 @@ function initRenderer() {
     sizeRandomness: 10
   };
   spawnerOptions = {
-      spawnRate: 10000,
+      spawnRate: 2500,
       horizontalSpeed: 1.5,
       verticalSpeed: 1.33,
       timeScale: 8
