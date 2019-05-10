@@ -131,10 +131,11 @@ function initRenderer() {
 
   // Wall testing: remove me later
   let wall42 = new Wall({
-    start: new THREE.Vector3(150,500,FLOOR_Z),
-    end:   new THREE.Vector3(150,0,FLOOR_Z),
-    // height: 200,
+    start: new THREE.Vector3(200,500,FLOOR_Z),
+    end:   new THREE.Vector3(500,0,FLOOR_Z),
+    // height: 200,0
     // thickness: 20,
+    color: 0x884444,
   });
   scene.add(wall42.mesh);
   walls.push(wall42);

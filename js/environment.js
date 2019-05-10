@@ -75,11 +75,13 @@ function Wall(params) {
     params.position = params.start.clone().lerp(params.end, 0.5);
 
     // Build the geometry and mesh
-    this.geometry = new THREE.BoxGeometry(params.height, params.thickness, length);
+    this.geometry = new THREE.BoxGeometry(length, params.thickness, params.height);
 
     this.mesh = new THREE.Mesh(this.geometry, this.material);
     this.mesh.position.copy(params.position);
-    this.mesh.lookAt(params.end);
+
+    let x_axis = new THREE.Vector3(1,0,0);
+    this.mesh.rotation.z = -startToEnd.angleTo(x_axis);
   }
 
   // Construct a wall with whichever params are specified, using defaults where unspecified
