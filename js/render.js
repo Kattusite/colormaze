@@ -266,6 +266,7 @@ function toggleColor(color) {
   updateColors();
 }
 
+
 // Downscale the quality of colors in the scene to those supported by currently
 // unlocked objectives
 function updateColors() {
@@ -287,12 +288,126 @@ function updateColors() {
     if (object.material.showTrueColor) continue;
 
     // The first time this object is processed, save its original color
-    if (!object.material.trueColor) object.material.trueColor = object.material.color;
+    if (!object.material.trueColor) object.material.trueColor = object.material.color.clone();
 
     let hex = object.material.trueColor.getHex();
+
+    // New idea:
+    let hsl = {}
+    object.material.trueColor.getHSL(hsl);
+
+    // If color is basically grayscale, just let it through. Otherwise filter channels
+    if (hsl.s > 0.1) {
+      // Filter out colors that are not unlocked
+      if (!objectives.red)    hex = hex & NO_RED;
+      if (!objectives.green)  hex = hex & NO_GRN;
+      if (!objectives.blue)   hex = hex & NO_BLU;
+    }
+
+    // Dither down to enabled fidelity
     let r = (hex & RED) >>> 16;
     let g = (hex & GRN) >>> 8;
     let b = (hex & BLU);
+
+    r /= 256;
+    g /= 256;
+    b /= 256;
+
+    let colorDepth;
+    if      (!objectives.bit2) colorDepth = 2;
+    else if (!objectives.bit4) colorDepth = 4;
+    else if (!objectives.bit8) colorDepth = 16;
+    else                       colorDepth = 256;
+
+    // Given a continuous value in [0,1) return a dithered value in [0,1]
+    let dither = function(comp) {
+      return Math.floor(comp * colorDepth) / (colorDepth - 1);
+    }
+
+    let dithR = dither(r);
+    let dithG = dither(g);
+    let dithB = dither(b);
+
+    object.material.color.copy(new THREE.Color(dithR, dithG, dithB));
+    continue;
+
+
+
+    /*
+    // New idea
+
+    // Dither at the very end (to simulate 8bit color --> 1/2/4 bit color)
+
+    // Before then, take the average of enabled colors (or all colors if none)
+    let enabled = {};
+
+    if (objectives.red)   enabled.r = r;
+    if (objectives.green) enabled.g = g;
+    if (objectives.blue)  enabled.b = b;
+
+    // If all colors disabled, take average of all of them
+    if (Object.keys(enabled).length == 0) enabled = {r: r, g: g, b: b};
+
+    // Average the enabled colors
+    let n = 0;
+    let sum = 0;
+    for (let key in enabled) {
+      sum += enabled[key];
+      n++;
+    }
+
+    let avg = sum / n;
+
+    // Set disabled channels to the average
+    if (!objectives.red)    r = avg;
+    if (!objectives.green)  g = avg;
+    if (!objectives.blue)   b = avg;
+
+    hex = (((r << 8) | g) << 8) | b;
+
+    object.material.color.set(hex);
+    continue;
+
+
+    // STill doesn't work
+    r /= 256; // in [0,1)
+    g /= 256; // in [0,1)
+    b /= 256; // in [0,1)
+
+    // Dither R, G, B separately
+    let colorDepth;
+    if      (!objectives.bit2) colorDepth = 2;
+    else if (!objectives.bit4) colorDepth = 4;
+    else if (!objectives.bit8) colorDepth = 16;
+    else                       colorDepth = 256;
+
+    let dither = function(comp) {
+      return Math.floor(comp * colorDepth) / (colorDepth - 1);
+    }
+
+    let dithR = dither(r);
+    let dithG = dither(g);
+    let dithB = dither(b);
+
+    // Convert dithered r,g,b to HSL
+    let dithHSL = {};
+    new THREE.Color(dithR, dithG, dithB).getHSL(dithHSL);
+
+    // Get whichever R,G,B are enabled; make new color
+    if (!objectives.red)    dithR = 0;
+    if (!objectives.green)  dithG = 0;
+    if (!objectives.blue)   dithB = 0;
+
+    // Convert new color to H,S,L.
+    let newHSL = {}
+    new THREE.Color(dithR, dithG, dithB).getHSL(newHSL);
+
+    // Restore S,L of original color.
+    // let newColor = new THREE.Color().setHSL(newHue, dithHSL.s, dithHSL.l);
+    object.material.color.setHSL(newHSL.h, dithHSL.s, dithHSL.l);
+    continue;
+    */
+
 
     // Special case: if none of R,G,B unlocked, set to white
     /*
@@ -302,27 +417,38 @@ function updateColors() {
     }
     */
 
+    /*
+    // Still doesnt work
+
     // Filter out colors that are not unlocked
     if (!objectives.red)    hex = hex & NO_RED;
     if (!objectives.green)  hex = hex & NO_GRN;
     if (!objectives.blue)   hex = hex & NO_BLU;
+
+    // If the color was filtered down to black, set it to a shade of grey based on brightness
+    if (hex == 0) {
+      // Compute average in range [0,1]
+      let L = ((r+g+b) / 255.0) / 3.0 ;
+
+      // If gray not unlocked, stuck with 0,1
+      if (!objectives.gray) L = Math.round(L);
+
+      // Bring back to range 0-255
+      L = Math.round(L * 255);
+
+      hex = (((L << 8) | L) << 8) | L;
+
+      // object.material.color = new THREE.Color(L, L ,L);
+      // continue;
+    }
 
     // Filter out fidelities that are not unlocked
     if (!objectives.bit2)   hex = hex & MASK_1;
     if (!objectives.bit4)   hex = hex & MASK_2;
     if (!objectives.bit8)   hex = hex & MASK_4;
 
-    // If the color was filtered down to black, set it to a shade of grey based on brightness
-    if (hex == 0) {
-      let l = ((r+g+b) / 255.0) / 3.0;
-
-      if (!objectives.gray) l = Math.round(l);
-
-      object.material.color = new THREE.Color(l,l,l);
-      continue;
-    }
-
     object.material.color = new THREE.Color(hex);
+    */
   }
 }
 
