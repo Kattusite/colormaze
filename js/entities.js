@@ -249,11 +249,37 @@ Projectile.prototype.intersectsWall = intersectsWall;
 /**                      OBJECTIVE                                           **/
 /**                                                                          **/
 /******************************************************************************/
-function Objective(position, color, unlock) {
+
+// Allowed params:
+/*
+params = {
+  color: 0x808080,
+  radius: 15,
+  tube: 5,
+  tubeSegments: 100,
+  radialSegments: 16,
+  init:  function() {},    // extra stuff to do in initialize step
+  animate: function () {}, // extra stuff to do in animate step.
+}
+*/
+
+const OBJECTIVE_DEFAULTS = {
+  color: 0xFFFFFF,
+  radius: 15,
+  tube: 5,
+  tubeSegments: 100,
+  radialSegments: 16,
+  init: undefined,
+  animate: undefined
+}
+
+
+function Objective(position, unlock, params) {
+  Core.setDefaultProperties(params, OBJECTIVE_DEFAULTS);
 
   // Define the mesh of the projectile
-  this.geometry = new THREE.TorusKnotGeometry(15, 5, 100, 16);
-  this.material = new THREE.MeshPhongMaterial({color: color});
+  this.geometry = new THREE.TorusKnotGeometry(params.radius, params.tube, params.tubeSegments, params.radialSegments);
+  this.material = new THREE.MeshPhongMaterial({color: params.color});
   this.material.showTrueColor = true;
 
   this.mesh = new THREE.Mesh(this.geometry, this.material)
@@ -262,6 +288,10 @@ function Objective(position, color, unlock) {
   // Has the objective been collected
   this.unlock = unlock;
   this.dead = false;
+
+  // If there are any other things specified to to in params, do them
+  if (params.init) params.init();
+  if (params.animate) this.extraAnimation = params.animate;
 }
 
 // Function to animate the projectile every frame.
@@ -277,6 +307,9 @@ Objective.prototype.animate = function() {
 
     this.dead = true;
   }
+
+  // If there is anything else specified to do in params, do it now
+  if (this.extraAnimation) this.extraAnimation();
 }
 
 Objective.prototype.isDead = function() {

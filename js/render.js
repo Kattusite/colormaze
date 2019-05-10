@@ -55,8 +55,7 @@ function initRenderer() {
   // Initialize the cameras
   camera2d = new THREE.OrthographicCamera(width/-2, width/2, height/2, height/-2, NEAR, FAR);
   camera3d = new THREE.PerspectiveCamera(35, width/height, NEAR, FAR);
-  //camera2d.position.set(0,10,0);
-  //camera3d.position.set(0,10,0);
+
   if (flat) camera = camera2d;
   else      camera = camera3d;
 
@@ -67,89 +66,19 @@ function initRenderer() {
   activeLights[ambientWhite.uuid] = ambientWhite;
 
   // ==================== SET UP THE SCENE ===========================
-  // (move this to its own function or file eventually)
-  // Add a cube to the scene
-  player = new Player();
-  scene.add(player.mesh);
-  // entities.push(player);
 
-  /*
-  geometry = new THREE.CubeGeometry(50,50,50);
-  material = new THREE.MeshLambertMaterial({color: 0xFFFFFF});
-  mesh = new THREE.Mesh(geometry, material);
-  mesh.position.set(0,0,-1000);
-  */
-  let material = new THREE.MeshLambertMaterial({color: 0xFFFFFF});
+  // Add the player, enemies, particles, walls, objectives...
+  initEntities();
+  initParticles();
+  initWalls();
+  initObjectives();
 
+
+  // The testing "floor" square in the center -- does nothing so far
   let geometry1 = new THREE.PlaneGeometry(300, 300, 1, 1);
   let material1 = new THREE.MeshLambertMaterial({color: 0x447777});
   let mesh1 = new THREE.Mesh(geometry1, material1);
   mesh1.position.set(0,0,-1100);
-
-  let shooter = new Shooter(500, 500, -1000);
-  scene.add(shooter.mesh);
-  entities.push(shooter);
-
-  // create 4 basic walls (heights and relative positions can be changed later)
-  let wall;
-  wall = new Wall({
-    length: 30,
-    thickness: 400,
-    height: 80,
-    position: new THREE.Vector3(-800, 0, -1000),
-    color: 0x4182ea
-  });
-  walls.push(wall);
-  scene.add(wall.mesh);
-
-  wall = new Wall({
-    length: 20,
-    thickness: 700,
-    height: 80,
-    position: new THREE.Vector3(800, 0, -1000),
-    color: 0x41ea74
-  });
-  walls.push(wall);
-  scene.add(wall.mesh);
-
-  wall = new Wall({
-    length: 500,
-    thickness: 50,
-    height: 80,
-    position: new THREE.Vector3(0, -500, -1000),
-    color: 0xea9641,
-  });
-  walls.push(wall);
-  scene.add(wall.mesh);
-
-  wall = new Wall({
-    length: 300,
-    thickness: 40,
-    height: 80,
-    position: new THREE.Vector3(100, 400, -1000),
-    color: 0xea41bd
-  });
-  walls.push(wall);
-  scene.add(wall.mesh);
-
-
-  // Wall testing: remove me later
-  let wall42 = new Wall({
-    start: new THREE.Vector3(150,500,FLOOR_Z),
-    end:   new THREE.Vector3(150,0,FLOOR_Z),
-    // height: 200,0
-    // thickness: 20,
-    color: 0x884444
-  });
-  scene.add(wall42.mesh);
-  walls.push(wall42);
-
-  // Add objective pickups to the scene
-  let grayscaleObjective = new Objective(new THREE.Vector3(-500,-500, FLOOR_Z), 0x808080, "gray");
-  entities.push(grayscaleObjective);
-  scene.add(grayscaleObjective.mesh);
-
-  // scene.add(mesh);
   scene.add(mesh1);
 
   particleSystem = new THREE.GPUParticleSystem({
@@ -174,18 +103,102 @@ function initRenderer() {
       verticalSpeed: 1.33,
       timeScale: 8
   };
+  // ==================================================================
 
   // Disable colors that aren't yet unlocked
   updateColors();
 
-
-  // ==================================================================
-
   requestAnimationFrame(render);
 }
 
+// Add the player and enemies to the scene
+function initEntities() {
+  // Add a playable cube to the scene
+  player = new Player();
+  scene.add(player.mesh);
+  // entities.push(player); // NOTE: The player should not be included in the entities array
+
+  // Add a single enemy to the scene
+  let shooter = new Shooter(500, 500, FLOOR_Z);
+  scene.add(shooter.mesh);
+  entities.push(shooter);
+}
+
+function initParticles() {
+  // TODO: Copy the particles code here
+}
+
+function initWalls() {
+  // create 4 basic walls (heights and relative positions can be changed later)
+  let wall;
+  wall = new Wall({
+    length: 30,
+    thickness: 400,
+    height: 80,
+    position: new THREE.Vector3(-800, 0, FLOOR_Z),
+    color: 0x4182ea
+  });
+  walls.push(wall);
+  scene.add(wall.mesh);
+
+  wall = new Wall({
+    length: 20,
+    thickness: 700,
+    height: 80,
+    position: new THREE.Vector3(800, 0, FLOOR_Z),
+    color: 0x41ea74
+  });
+  walls.push(wall);
+  scene.add(wall.mesh);
+
+  wall = new Wall({
+    length: 500,
+    thickness: 50,
+    height: 80,
+    position: new THREE.Vector3(0, -500, FLOOR_Z),
+    color: 0xea9641,
+  });
+  walls.push(wall);
+  scene.add(wall.mesh);
+
+  wall = new Wall({
+    length: 300,
+    thickness: 40,
+    height: 80,
+    position: new THREE.Vector3(100, 400, FLOOR_Z),
+    color: 0xea41bd
+  });
+  walls.push(wall);
+  scene.add(wall.mesh);
+
+
+  // Wall testing: remove me later
+  let wall42 = new Wall({
+    start: new THREE.Vector3(150,500,FLOOR_Z),
+    end:   new THREE.Vector3(150,0,FLOOR_Z),
+    // height: 200,0
+    // thickness: 20,
+    color: 0x884444
+  });
+  scene.add(wall42.mesh);
+  walls.push(wall42);
+}
+
+// Initialize the objective entities
+function initObjectives() {
+  // Defined in scene/scene_objectives.js
+
+  // Add objective pickups to the scene
+  for (let unlock in SCENE_OBJECTIVES) {
+    let obj = SCENE_OBJECTIVES[unlock];
+    let objectiveEntity = new Objective(obj.position, unlock, obj.params);
+    entities.push(objectiveEntity);
+    scene.add(objectiveEntity.mesh);
+  }
+}
+
 /******************************************************************************/
-/**                      INITIALIZERS                                        **/
+/**                      RENDER  LOOP                                        **/
 /**                                                                          **/
 /******************************************************************************/
 // Render a scene (many times per second)

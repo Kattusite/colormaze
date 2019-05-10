@@ -53,12 +53,7 @@ params = {
 // don't want to lose your params.
 function Wall(params) {
   // Use the default height and thickness if undefined
-  if (!params.length)    params.length    = WALL_DEFAULTS.length;
-  if (!params.thickness) params.thickness = WALL_DEFAULTS.thickness;
-  if (!params.height)    params.height    = WALL_DEFAULTS.height;
-  if (!params.color)     params.color     = WALL_DEFAULTS.color;
-  if (!params.position)  params.position  = WALL_DEFAULTS.position.clone();
-  if (!params.speed)     params.speed     = WALL_DEFAULTS.speed;
+  Core.setDefaultProperties(params, WALL_DEFAULTS);
 
   // Create the material
   this.material = new THREE.MeshLambertMaterial({color: params.color})
