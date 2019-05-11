@@ -4,7 +4,7 @@
 var SCENE_OBJECTIVES = {
   // Testing ones (copy paste em)
   "pulse": {
-    position: new THREE.Vector3(200,-600, FLOOR_Z),
+    position: new THREE.Vector3(200,-600, PLAYER_Z),
     params: {
       color: 0x808080,
       animate: function() {
@@ -14,19 +14,19 @@ var SCENE_OBJECTIVES = {
     }
   },
   "gray": {
-    position: new THREE.Vector3(-500,-600, FLOOR_Z),
+    position: new THREE.Vector3(-500,-600, PLAYER_Z),
     params: {
       color: 0x808080,
     }
   },
   "green": {
-    position: new THREE.Vector3(-400,-600, FLOOR_Z),
+    position: new THREE.Vector3(-400,-600, PLAYER_Z),
     params: {
       color: 0x7aea52,
     }
   },
   "bit2": {
-    position: new THREE.Vector3(-300,-600, FLOOR_Z),
+    position: new THREE.Vector3(-300,-600, PLAYER_Z),
     params: {
       color: 0x808080,
       tubeSegments: 10,
@@ -39,13 +39,13 @@ var SCENE_OBJECTIVES = {
     }
   },
   "blue": {
-    position: new THREE.Vector3(-200,-600, FLOOR_Z),
+    position: new THREE.Vector3(-200,-600, PLAYER_Z),
     params: {
       color: 0x52b5ea,
     }
   },
   "bit4": {
-    position: new THREE.Vector3(-100,-600, FLOOR_Z),
+    position: new THREE.Vector3(-100,-600, PLAYER_Z),
     params: {
       color: 0x808080,
       tubeSegments: 20,
@@ -58,13 +58,13 @@ var SCENE_OBJECTIVES = {
     }
   },
   "red": {
-    position: new THREE.Vector3(0,-600, FLOOR_Z),
+    position: new THREE.Vector3(0,-600, PLAYER_Z),
     params: {
       color: 0xea5254,
     }
   },
   "bit8": {
-    position: new THREE.Vector3(100,-600, FLOOR_Z),
+    position: new THREE.Vector3(100,-600, PLAYER_Z),
     params: {
       color: 0x808080,
       tubeSegments: 30,
@@ -79,7 +79,7 @@ var SCENE_OBJECTIVES = {
 
   // Actual game ones
   "pulse": {
-    position: new THREE.Vector3(600, 550, FLOOR_Z),
+    position: new THREE.Vector3(600, 550, PLAYER_Z),
     params: {
       color: 0x808080,
       animate: function() {
@@ -89,7 +89,7 @@ var SCENE_OBJECTIVES = {
     }
   },
   "gray": {
-    position: new THREE.Vector3(2100, 1200, FLOOR_Z),
+    position: new THREE.Vector3(2100, 1200, PLAYER_Z),
     params: {
       color: 0x808080,
     }

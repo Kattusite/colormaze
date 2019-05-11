@@ -121,19 +121,19 @@ function initEntities() {
   // Add 4 intro shooters
   let shooter;
 
-  shooter = new Shooter(1100, 1200, FLOOR_Z);
+  shooter = new Shooter(1100, 1200, PLAYER_Z);
   scene.add(shooter.mesh);
   entities.push(shooter);
 
-  shooter = new Shooter(1500, 1200, FLOOR_Z);
+  shooter = new Shooter(1500, 1200, PLAYER_Z);
   scene.add(shooter.mesh);
   entities.push(shooter);
 
-  shooter = new Shooter(1300, 800, FLOOR_Z);
+  shooter = new Shooter(1300, 800, PLAYER_Z);
   scene.add(shooter.mesh);
   entities.push(shooter);
 
-  shooter = new Shooter(1700, 800, FLOOR_Z);
+  shooter = new Shooter(1700, 800, PLAYER_Z);
   scene.add(shooter.mesh);
   entities.push(shooter);
 }

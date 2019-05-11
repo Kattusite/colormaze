@@ -88,10 +88,10 @@ function intersectsWall() {
 
 function Player() {
   this.origColor = 0xFFFFFF;
-  this.geometry = new THREE.CubeGeometry(50,50,50);
+  this.geometry = new THREE.CubeGeometry(PLAYER_SIZE,PLAYER_SIZE, PLAYER_SIZE);
   this.material = new THREE.MeshLambertMaterial({color: this.origColor});
   this.mesh = new THREE.Mesh(this.geometry, this.material);
-  this.mesh.position.add(new THREE.Vector3(0,0,-1000));
+  this.mesh.position.add(new THREE.Vector3(0,0,PLAYER_Z));
 
   this.position = this.mesh.position;
 

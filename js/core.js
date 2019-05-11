@@ -40,7 +40,9 @@ var ambientBlue   = new THREE.AmbientLight(0x0000ff, 1);
 var pointWhite = new THREE.PointLight(0xffffff, 1);
 
 // Z-coordinate of the "floor" of the simulation
-const FLOOR_Z = -1000;
+const FLOOR_Z = -1000; // For walls
+const PLAYER_SIZE = 50;
+const PLAYER_Z = FLOOR_Z + PLAYER_SIZE / 2;  // For players, objectives, entities
 
 
 /******************************************************************************/
