@@ -255,8 +255,11 @@ function initWalls() {
       // Track max thickness for bounding box "fudge factor"
       if (thickness > maxThick) maxThick = thickness;
 
+      // Make it so that the cell surrounding the start peg is filled in,
+      // and the cell surrounding the end peg is left empty
+      // (This is so that adjacent wall meshes don't clip into each other at all)
       let startToEnd = end.clone().sub(start).normalize().multiplyScalar(thickness/2);
-      end.add(startToEnd);
+      // end.add(startToEnd);
       start.add(startToEnd.negate());
 
       wallParams.start = start;
