@@ -56,12 +56,26 @@ function initRenderer() {
   camera2d = new THREE.OrthographicCamera(width/-2, width/2, height/2, height/-2, NEAR, FAR);
   camera3d = new THREE.PerspectiveCamera(35, width/height, NEAR, FAR);
 
-  if (flat) camera = camera2d;
-  else      camera = camera3d;
-
   controls = new THREE.OrbitControls(camera3d, renderer.domElement);
-  controls.minDistance = 100;
-  controls.maxDistance = 500;
+
+  if (flat) {
+    camera = camera2d;
+    controls.enabled = false;
+  }
+  else {
+    camera = camera3d;
+    controls.enabled = true;
+  }
+
+  controls.minDistance = 1000;
+  controls.maxDistance = 1000;
+  controls.maxAzimuthAngle = Math.PI / 8;
+  controls.minAzimuthAngle = -Math.PI / 8;
+  controls.maxPolarAngle = 5 * Math.PI / 8;
+  controls.minPolarAngle = 3 * Math.PI / 8;
+  controls.enabled = false;
+  controls.screenSpacePanning = true;
+  controls.saveState();
 
   scene = new THREE.Scene();
 
@@ -488,10 +502,10 @@ function getScreenBoundingBox() {
   let w = window.innerWidth;
   let h = window.innerHeight;
 
-  let min = new THREE.Vector3(-w/4, -h/4, -FAR);
-  let max = new THREE.Vector3(w/4, h/4, -NEAR);
-  min.add(camera.position);
-  max.add(camera.position);
+  let min = new THREE.Vector3(-w/8, -h/8, -FAR);
+  let max = new THREE.Vector3(w/8, h/8, -NEAR);
+  min.add(camera2d.position);
+  max.add(camera2d.position);
 
   let box = new THREE.Box3(min, max);
   return box;
@@ -538,8 +552,14 @@ function handleKeypress(event) {
   // Change the camera perspective
   if (action.type == SHIFT) {
     flat = !flat;
-    if (flat) camera = camera2d;
-    else      camera = camera3d;
+    if (flat) {
+      camera = camera2d;
+      controls.enabled = false;
+    }
+    else {
+      camera = camera3d;
+      controls.enabled = true;
+    }
   }
   else if (action.type == ADD_LIGHT) {
     let uuid = action.light.uuid;

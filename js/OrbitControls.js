@@ -821,7 +821,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 
         if ( scope.enabled === false || scope.enableKeys === false || scope.enablePan === false ) return;
 
-        handleKeyDown( event );
+        // handleKeyDown( event );
 
     }
 
