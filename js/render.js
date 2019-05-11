@@ -118,8 +118,22 @@ function initEntities() {
   scene.add(player.mesh);
   // entities.push(player); // NOTE: The player should not be included in the entities array
 
-  // Add a single enemy to the scene
-  let shooter = new Shooter(500, 500, FLOOR_Z);
+  // Add 4 intro shooters
+  let shooter;
+
+  shooter = new Shooter(1100, 1200, FLOOR_Z);
+  scene.add(shooter.mesh);
+  entities.push(shooter);
+
+  shooter = new Shooter(1500, 1200, FLOOR_Z);
+  scene.add(shooter.mesh);
+  entities.push(shooter);
+
+  shooter = new Shooter(1300, 800, FLOOR_Z);
+  scene.add(shooter.mesh);
+  entities.push(shooter);
+
+  shooter = new Shooter(1700, 800, FLOOR_Z);
   scene.add(shooter.mesh);
   entities.push(shooter);
 }
@@ -193,11 +207,19 @@ function initWalls() {
     // Add every wall in the zone to a Group
     // Compute bounding box
     let min, max, maxThick = 0;
+
+    // If a wall has an undefined start, then its start is assumed to be lastEnd
+    // (the end of the previous wall)
+    let lastEnd;
     for (let wallParams of zoneWalls) {
 
       // Convert start, end to Vec3s
       let sXY = wallParams.start;
       let eXY = wallParams.end;
+
+      // Set start to the end of the last wall if it is not defined
+      if (!sXY) sXY = lastEnd;
+      lastEnd = eXY;
 
       let start = new THREE.Vector3(sXY[0], sXY[1], FLOOR_Z);
       let end   = new THREE.Vector3(eXY[0], eXY[1], FLOOR_Z);

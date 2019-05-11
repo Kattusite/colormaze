@@ -23,6 +23,7 @@ const WALL_DEFAULTS = {
   end: undefined,
   speed: 0,      // Multiplier for speed of players passing through.
   visible: true, // false for invisible walls (e.g. pits)
+  unlockedBy: undefined // If unlockable, will be a string for name of objective that unlocks it
 }
 
 // Speed of 0   = cannot pass through
@@ -42,6 +43,7 @@ params = {
     rotation: new THREE.Euler(),
     start: new THREE.Vector3(),
     end: new THREE.Vector3()
+    unlockedBy: "gray" // the name of the objective that will make this wall passable
 }
 */
 
@@ -66,6 +68,7 @@ function Wall(params) {
   }
 
   this.speed = params.speed;
+  this.unlockedBy = params.unlockedBy;
 
   // Construct a wall from start to end, with optionally specified width, height
   if (params.start && params.end) {

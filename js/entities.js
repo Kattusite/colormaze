@@ -26,8 +26,17 @@ function intersectsWall() {
   let intersectsWallGroup = function(group) {
     // Check if intersects a single wall
     if (group.type === "Wall") {
+      // Here group is a misnomer, group is actually a single wall
       if (group.intersectsHitbox(hitbox)) {
-        return [true, group.speed];
+        // If this wall is unlockable (i.e. a door), check if it's unlocked
+        if (group.unlockedBy) {
+          // If unlocked, allow through at wall's speed
+          if (objectives[group.unlockedBy]) return [true, group.speed];
+          // Otherwise, door is locked, do not allow through at all
+          else                              return [true, 0];
+        }
+        // For walls that aren't unlockable just return their standard speed
+        else return [true, group.speed];
       }
       return [false, 1];
     }
@@ -87,7 +96,7 @@ function Player() {
   this.position = this.mesh.position;
 
   // How quickly does the player move?
-  this.speed = 10;
+  this.speed = 10;  // 5 for gameplay, 10 for testing
 
   // pulse rate, starts at 1
   this.pulseRate = 1;
@@ -108,6 +117,7 @@ Player.prototype.animate = function() {
     // If a move action is active, move the player in the relevant direction.
     if (action.type === MOVE) {
       let motion = action.vector.clone().multiplyScalar(this.speed);
+      let prevPosition = this.mesh.position.clone();
       this.mesh.position.add(motion);
 
       // If player would have hit a wall, revert the motion and continue
@@ -117,13 +127,15 @@ Player.prototype.animate = function() {
         // speeding up the cube
         motion.multiplyScalar(1 - this.wallSpeed);
         this.mesh.position.sub(motion);
-        continue;
+        // continue;
       }
 
       // If player strays out of central bounding box, chase them with camera
       if (!boundingBox.containsPoint(this.mesh.position)) {
-        camera2d.position.add(motion);
-        camera3d.position.add(motion);
+        // However much the player moved, the camera should move also
+        let actualMovement = this.mesh.position.clone().sub(prevPosition);
+        camera2d.position.add(actualMovement);
+        camera3d.position.add(actualMovement);
       }
     }
   }
@@ -184,8 +196,8 @@ function Shooter(x, y, z) {
 
   this.position = this.mesh.position;
 
-  this.firingDelay = 1500; // minimum time between shots
-  this.randDelay = 1000;   // max random extra time between shots
+  this.firingDelay = 1000; // minimum time between shots
+  this.randDelay = 200;   // max random extra time between shots
   this.prevShot = undefined;   // time in ms of last shot
   this.nextShot = time + this.firingDelay + this.randDelay;  // time in ms of next shot
 
@@ -255,10 +267,10 @@ function Projectile(position, velocity) {
 
   // Define velocity
   this.velocity = velocity.clone().normalize();   // normalized direction of travel
-  this.speed = 8;                                 // speed to scale velocity by
+  this.speed = 12;                                 // speed to scale velocity by
   this.velocity.multiplyScalar(this.speed);       // actual velocity vector
 
-  this.damage = 10; // how much damage is inflicted on hit
+  this.damage = 20; // how much damage is inflicted on hit
 
   // Define travel time and despawn time
   this.spawnTime = time;

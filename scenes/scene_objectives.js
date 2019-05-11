@@ -2,6 +2,17 @@
 // their positions in the scene.
 
 var SCENE_OBJECTIVES = {
+  // Testing ones (copy paste em)
+  "pulse": {
+    position: new THREE.Vector3(200,-600, FLOOR_Z),
+    params: {
+      color: 0x808080,
+      animate: function() {
+        let factor = 1 + 0.2 * Math.sin(time / 500);
+        this.mesh.scale.set(1,1,1).multiplyScalar(factor);
+      },
+    }
+  },
   "gray": {
     position: new THREE.Vector3(-500,-600, FLOOR_Z),
     params: {
@@ -65,14 +76,22 @@ var SCENE_OBJECTIVES = {
       }
     }
   },
+
+  // Actual game ones
   "pulse": {
-    position: new THREE.Vector3(200,-600, FLOOR_Z),
+    position: new THREE.Vector3(600, 550, FLOOR_Z),
     params: {
       color: 0x808080,
       animate: function() {
         let factor = 1 + 0.2 * Math.sin(time / 500);
         this.mesh.scale.set(1,1,1).multiplyScalar(factor);
       },
+    }
+  },
+  "gray": {
+    position: new THREE.Vector3(2100, 1200, FLOOR_Z),
+    params: {
+      color: 0x808080,
     }
   },
 };
