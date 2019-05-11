@@ -44,7 +44,7 @@ function initKeybindings() {
 function initRenderer() {
   // Initialize the WebGL renderer
   renderer = new THREE.WebGLRenderer({canvas: $('#gameCanvas')[0], antialias: true});
-  renderer.setClearColor(0x554455);
+  renderer.setClearColor(0xa5b6b6);
   renderer.setPixelRatio(window.devicePixelRatio);
 
   let width = window.innerWidth;
@@ -78,6 +78,18 @@ function initRenderer() {
   controls.saveState();
 
   scene = new THREE.Scene();
+  //fog = new THREE.Fog(0xFFFFFF, 200, 2000);
+  //scene.fog = fog;
+
+  // BUild an "infinite" floor
+  /*
+  let floor = {};
+  floor.geometry = new THREE.PlaneGeometry(100000, 100000);
+  floor.material = new THREE.MeshLambertMaterial(0x443344);
+  floor.mesh     = new THREE.Mesh(floor.geometry, floor.material);
+  floor.mesh.position.set(0,0,-2000);
+  scene.add(floor.mesh);
+  */
 
   // Add lights (playing with these leads to super cool effects)
   scene.add(ambientWhite);
@@ -233,11 +245,23 @@ function initWalls() {
     let lastEnd;
     let prevParams = undefined; // Params of the last wall we made
     let firstParams = undefined // Params of the first wall we made (to link with final wall in line mode)
+
+    // Build a floor around the wall group (and hope nothing breaks)
+    let floor = new THREE.Shape();
     for (let wallParams of zoneWalls) {
 
       // Convert start, end to Vec3s
       let sXY = wallParams.start;
       let eXY = wallParams.end
+
+      // Start building the floor
+      if (!wallParams.nofloor) {
+        // For first wall, move the shape.
+        if (!firstParams) floor.moveTo(sXY[0], sXY[1]);
+
+        // For other walls, draw line to end
+        floor.lineTo(eXY[0], eXY[1]);
+      }
 
       // If end defined but start isn't, we're in line mode --
       // we are continuing the line formed by the endpoint of the previous wall
@@ -351,6 +375,17 @@ function initWalls() {
 
     let boundingBox = new THREE.Box3(min, max);
     group.boundingBox = boundingBox;
+
+    // Build the floor
+    let floorDef = {};
+    floorDef.geometry = new THREE.ShapeGeometry(floor);
+    floorDef.material = new THREE.MeshLambertMaterial({color: 0x443344});
+    floorDef.mesh     = new THREE.Mesh(floorDef.geometry, floorDef.material);
+    floorDef.type = "Floor";
+    floorDef.mesh.parentDef = floorDef;
+    // let firstPos = firstParams.start
+    floorDef.mesh.position.set(0,0, FLOOR_Z);
+    group.add(floorDef.mesh);
 
     scene.add(group);
     walls.push(group);

@@ -6,6 +6,29 @@
 // z will be assumed to be FLOOR_Z.
 // This is just to make it easier to type in the walls
 
+// Acceptable params here are a restricted subset of wall params, plus some extra
+// The term "cell" is used to determine the graph paper style grid square
+// containing a given point. The dimensions of the cell are thickness x thickness
+/*
+  //
+  start: start "cell", given as [x,y]
+  end:   end "cell", given as [x,y]
+  // The space between start and end cells is filled, the start/end cells themselves are vacant
+  // if start is not defined, the end of the previous wall is used
+  color: 0xffffff
+  // TODO make it so if color is not defined it is a function of prev color
+  // e.g. prevColor.hue + 0.05
+  cell: provided for "peg" walls that occupy only a single cell, whose coords
+        are given as an array [x,y]
+  cycle: provided for last wall in a chain to indicate a peg should be inserted
+         between last wall and first wall.
+  skip: provided to indicate a chain should be continued, but this
+                particular wall segment should be skipped.
+      (typically because we will manually replace it with a different, special wall)
+  nofloor: provided to indicate this should not be considered for floor building
+
+*/
+
 var SCENE_WALLS = {
   "intro" : [
     {

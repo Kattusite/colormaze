@@ -10,7 +10,7 @@
 /**                                                                          **/
 /******************************************************************************/
 // Renderer + Scene objects
-var renderer, scene;
+var renderer, scene, fog;
 
 // Entities (shooters, projectiles), Walls, and Lights currently in scene
 var entities = [];

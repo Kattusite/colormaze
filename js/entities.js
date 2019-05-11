@@ -23,6 +23,7 @@ function intersectsWall() {
   // Return an array such that:
   // ret[0] = true if intersected a wall, false otherwise
   // ret[1] = wall speed of the intersected wall (or 1 if no intersection)
+  let NO_INTERSECTION = [false, 1];
   let intersectsWallGroup = function(group) {
     // Check if intersects a single wall
     if (group.type === "Wall") {
@@ -38,14 +39,14 @@ function intersectsWall() {
         // For walls that aren't unlockable just return their standard speed
         else return [true, group.speed];
       }
-      return [false, 1];
+      return NO_INTERSECTION;
     }
     // Check if intersects group of walls
     else if (group.type === "Group") {
       // If this is outside the entire zone's bounding box, it must be outside
       // wall bounding boxes too
       let boundingBox = group.boundingBox;
-      if (!boundingBox.intersectsBox(hitbox)) return [false, 1];
+      if (!boundingBox.intersectsBox(hitbox)) return NO_INTERSECTION;
 
       // If inside the bounding box, check all the children in zone
       let minSpeed = 9e99; // min speed of all intersected walls
@@ -64,9 +65,15 @@ function intersectsWall() {
         }
       }
       // If minSpeed unchanged, no intersections took place!
-      if (minSpeed == 9e99) return [false, 1];
+      if (minSpeed == 9e99) return NO_INTERSECTION;
       else return [true, minSpeed];
       // return [false, 1];
+    }
+    else if (group.type === "Floor") {
+      return NO_INTERSECTION;
+    }
+    else {
+      console.error("No type defined in wall group")
     }
   }
 
