@@ -124,7 +124,7 @@ function initRenderer() {
     color: 0x22ff88,
     colorRandomness: .2,
     turbulence: .5,
-    lifetime: 4,
+    lifetime: 0,
     size: 30,
     sizeRandomness: 10
   };

@@ -69,7 +69,10 @@ var objectives = {
   bit8:           false,
   // Stretch goals
   sounds:         false,
-  jump:           false
+  jump:           false,
+  // particle stuff
+  coolParticles:  false,
+  lameParticles:  false
 };
 
 
