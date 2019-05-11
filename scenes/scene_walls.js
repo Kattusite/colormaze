@@ -9,53 +9,38 @@
 var SCENE_WALLS = {
   "intro" : [
     {
-      start: [  -100,  -100],
-      end:   [  +100,  -100],
+      start: [  +100,  -100],
+      end:   [  -100,  -100],
       color: 0x4faf92,
     },
     {
-      start: [  -100,  -100],
       end:   [  -100,  +650],
       color: 0x4f68af,
     },
+
     {
-      start: [  +100,  -100],
-      end:   [  +100,  +450],
-      color: 0x974faf,
-    },
-    {
-      start: [  -100,  +650],
       end:   [  +800,  +650],
       color: 0x4f68af,
     },
+
     {
-      start: [  +100,  +450],
-      end:   [  +800,  +450],
-      color: 0x924faf,
-    },
-    {
-      start: [  +800,  +650],
       end:   [  +800, +1100],
       color: 0x4f8caf,
     },
     {
-      start: [  +800, +1100],
       end:   [ +1000, +1100],
       color: 0x252191,
     },
     {
-      start: [  1000,  1100],
       end:   [  1000, +1300],
       color: 0x252191,
     },
     {
-      start: [  1000,  1300],
       end:   [  1200,  1300],
       color: 0x252191,
     },
     // Now I'm using the condensed notation (missing starts are assumed to be previous end)
     {
-      start: [  1200,  1300],
       end:   [  1200,  1100],
       color: 0x252191,
     },
@@ -150,9 +135,18 @@ var SCENE_WALLS = {
       end:   [  800, 450],
       color: 0x252191,
     },
+    {
+      end:   [  +100,  +450],
+      color: 0x924faf,
+    },
 
-
-
-
+    {
+      // cycle true indicates this wall is adjacent to the start wall
+      // and we should add a peg between them.
+      // cycle should be only set on the last wall in a chain
+      end:   [  +100,  -100],
+      color: 0x974faf,
+      cycle: true
+    },
   ]
 };

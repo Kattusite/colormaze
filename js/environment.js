@@ -21,6 +21,7 @@ const WALL_DEFAULTS = {
   rotation: new THREE.Euler(0,0,0),
   start: undefined,
   end: undefined,
+  cell: undefined, // The single thickness x thickness cell that this wall should occupy (more of a peg than a wall really)
   speed: 0,      // Multiplier for speed of players passing through.
   visible: true, // false for invisible walls (e.g. pits)
   unlockedBy: undefined // If unlockable, will be a string for name of objective that unlocks it
@@ -50,6 +51,7 @@ params = {
 // I'm not gonna code up all the special cases
 // Just use {length, height, thickness, (position), (rotation)}
 // or use   {start, end, height, thickness}
+// or use   {cell, (...)}
 
 // Creates a wall given a parameter dictionary as input.
 // This modifies the dictionary passed in, so save a copy if you
@@ -70,8 +72,18 @@ function Wall(params) {
   this.speed = params.speed;
   this.unlockedBy = params.unlockedBy;
 
+  // Construct a single wall peg at the coords given by cell
+  if (params.cell) {
+    params.position = params.cell.clone();
+
+    // Build geometry and mesh
+    this.geometry = new THREE.BoxGeometry(params.thickness, params.thickness, params.height);
+    this.mesh = new THREE.Mesh(this.geometry, this.material);
+    this.mesh.position.copy(params.position);
+  }
+
   // Construct a wall from start to end, with optionally specified width, height
-  if (params.start && params.end) {
+  else if (params.start && params.end) {
     // Find the length of the wall
     let startToEnd = params.end.clone().sub(params.start);
     let length = startToEnd.length();

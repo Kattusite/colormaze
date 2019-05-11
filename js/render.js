@@ -218,6 +218,7 @@ function initWalls() {
   walls.push(wall42);
   */
 
+
   // Iterate over all zones, and add the walls
   for (let zone in SCENE_WALLS) {
     let group = new THREE.Group();
@@ -230,45 +231,97 @@ function initWalls() {
     // If a wall has an undefined start, then its start is assumed to be lastEnd
     // (the end of the previous wall)
     let lastEnd;
+    let prevParams = undefined; // Params of the last wall we made
+    let firstParams = undefined // Params of the first wall we made (to link with final wall in line mode)
     for (let wallParams of zoneWalls) {
 
       // Convert start, end to Vec3s
       let sXY = wallParams.start;
-      let eXY = wallParams.end;
+      let eXY = wallParams.end
 
-      // Set start to the end of the last wall if it is not defined
-      if (!sXY) sXY = lastEnd;
+      // If end defined but start isn't, we're in line mode --
+      // we are continuing the line formed by the endpoint of the previous wall
+      let lineMode = (!sXY && eXY);
+
+      // Set start to the end of the last wall if it is not defined (if we are in lineMode)
+      if (lineMode) sXY = lastEnd;
       lastEnd = eXY;
 
       let start = new THREE.Vector3(sXY[0], sXY[1], FLOOR_Z);
       let end   = new THREE.Vector3(eXY[0], eXY[1], FLOOR_Z);
 
-      // Move start and end away from each other by 50 to fix jaggy corners
+      // Move start and end towards each other by half thickness to vacate the cells
+      // where adjacent walls would intersect and clip
       let thickness;
-      if (wallParams.thickness) {
-        thickness = wallParams.thickness;
-      }
-      else {
-        thickness = WALL_DEFAULTS.thickness
-      }
+      if (wallParams.thickness)   thickness = wallParams.thickness;
+      else                        thickness = WALL_DEFAULTS.thickness
 
       // Track max thickness for bounding box "fudge factor"
       if (thickness > maxThick) maxThick = thickness;
 
-      // Make it so that the cell surrounding the start peg is filled in,
-      // and the cell surrounding the end peg is left empty
+      // Fill in the misisng peg on the start cell of the wall if in line mode
+      // Interpolate the color and the wall height
+      // prev and next are both wall params objects
+      let createPeg = function(prev, next) {
+        // Get the color of each adj. wall, using defaults if undefined
+        let pegColors = [];
+        if (next.color) pegColors.push(new THREE.Color(next.color));
+        if (prev.color) pegColors.push(new THREE.Color(prev.color));
+        while (pegColors.length < 2) {
+          pegColors.push(WALL_DEFAULTS.color.clone());
+        }
+
+        // average peg color
+        let pegColor = new THREE.Color().addColors(pegColors[0], pegColors[1]);
+        pegColor.multiplyScalar(0.5);
+
+        // Get the height of each adj. wall, using defaults if undefined
+        let pegHeights = [];
+        if (next.height) pegHeights.push(next.height);
+        if (prev.height) pegHeights.push(prev.height);
+        while (pegHeights.length < 2) {
+          pegHeights.push(WALL_DEFAULTS.height);
+        }
+        let pegHeight = (pegHeights[0] + pegHeights[1]) / 2.0;
+
+        // Build the peg wall to fill the start cell.
+        let pegParams = {
+          color:  pegColor.getHex(),
+          height: pegHeight,
+          cell:   next.start.clone(), // undo the offset from above
+        }
+
+        let pegWall = new Wall(pegParams);
+        pegWall.mesh.parentDef = pegWall;
+
+        group.add(pegWall.mesh);
+
+      }
+      if (lineMode) {
+        // Create the peg in the start position
+        wallParams.start = start.clone(); // the cell position
+        createPeg(prevParams, wallParams);
+
+        // If we are closing a cycle also create the peg in the end position
+        if (wallParams.cycle) {
+          createPeg(wallParams, firstParams);
+        }
+      }
+
+      // Make it so that the cell surrounding start and end pegs is vacant
       // (This is so that adjacent wall meshes don't clip into each other at all)
-      let startToEnd = end.clone().sub(start).normalize().multiplyScalar(thickness/2);
-      // end.add(startToEnd);
+      let startToEnd = end.clone().sub(start).normalize().multiplyScalar(-thickness/2);
+      end.add(startToEnd);
       start.add(startToEnd.negate());
 
-      wallParams.start = start;
-      wallParams.end   = end;
+      wallParams.start = start.clone();
+      wallParams.end   = end.clone();
 
-      // If start, end outside current bounding box, expand it.
+      // If min and max (for bounding box) not yet defined, use start as a default
       if (!min) min = new THREE.Vector3().copy(start);
       if (!max) max = new THREE.Vector3().copy(start);
 
+      // If start and end outside current bounding box, expand it.
       min.min(start);
       min.min(end);
 
@@ -277,6 +330,12 @@ function initWalls() {
 
       // Make a new wall, and give its mesh a pointer to parent
       let wall = new Wall(wallParams);
+      // Save the first wall's parameters to link up the final wall in lineMode
+      if (!prevParams) {
+        firstParams = wallParams;
+        firstParams.start.add(startToEnd.negate()); // undo the offset for first wall
+      }
+      prevParams = wallParams;
       wall.mesh.parentDef = wall;
 
       group.add(wall.mesh);
@@ -293,8 +352,6 @@ function initWalls() {
     let boundingBox = new THREE.Box3(min, max);
     group.boundingBox = boundingBox;
 
-
-    // TODO Figure out wtf is up with collisions
     scene.add(group);
     walls.push(group);
   }
