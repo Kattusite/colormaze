@@ -29,6 +29,7 @@ var flat = true;
 var camera; // The camera currently being used (either camera2d, camera3d)
 var camera2d; // The 2d orthographic camera
 var camera3d; // The 3d perspective camera
+var controls; // controls for camera rotation
 
 // Ambient Lights
 var ambientWhite  = new THREE.AmbientLight(0xffffff, 1);

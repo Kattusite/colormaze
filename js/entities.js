@@ -148,6 +148,7 @@ Player.prototype.animate = function() {
         let actualMovement = this.mesh.position.clone().sub(prevPosition);
         camera2d.position.add(actualMovement);
         camera3d.position.add(actualMovement);
+        controls.update();
       }
     }
   }
