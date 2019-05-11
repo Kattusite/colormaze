@@ -21,7 +21,7 @@ var SCENE_OBJECTIVES = {
       tubeSegments: 10,
       radialSegments: 3,
       animate: function() {
-        let L = (Math.sin(time / 1000) / 2) + 0.5;
+        let L = (Math.sin(time / 3000) / 2) + 0.5;
         let newColor = ditherRGB(L,L,L,4, true);
         this.material.color.copy(newColor);
       }
@@ -40,7 +40,7 @@ var SCENE_OBJECTIVES = {
       tubeSegments: 20,
       radialSegments: 6,
       animate: function() {
-        let L = (Math.sin(time / 1000) / 2) + 0.5;
+        let L = (Math.sin(time / 3000) / 2) + 0.5;
         let newColor = ditherRGB(L,L,L,16, true);
         this.material.color.copy(newColor);
       }
@@ -59,7 +59,7 @@ var SCENE_OBJECTIVES = {
       tubeSegments: 30,
       radialSegments: 9,
       animate: function() {
-        let L = (Math.sin(time / 1000) / 2) + 0.5;
+        let L = (Math.sin(time / 3000) / 2) + 0.5;
         let newColor = ditherRGB(L,L,L,256, true);
         this.material.color.copy(newColor);
       }

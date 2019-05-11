@@ -15,14 +15,58 @@ function getHitbox() {
 // WARNING: Slow! Has to check every wall -- we should optimize if not fast enough
 // If a wall is intersected, sets this.wallSpeed to the wall's speed
 // Else, sets it to 1
+// Sorry in advance. This function is a mess
 function intersectsWall() {
   let hitbox = this.getHitbox();
-  for (wall of walls) {
-    if (wall.intersectsHitbox(hitbox)) {
-      this.wallSpeed = wall.speed;
-      return true;
+
+  // Check whether this intersects an entire wall group (or possibly a single wall)
+  // Return an array such that:
+  // ret[0] = true if intersected a wall, false otherwise
+  // ret[1] = wall speed of the intersected wall (or 1 if no intersection)
+  let intersectsWallGroup = function(group) {
+    // Check if intersects a single wall
+    if (group.type === "Wall") {
+      if (group.intersectsHitbox(hitbox)) {
+        return [true, group.speed];
+      }
+      return [false, 1];
+    }
+    // Check if intersects group of walls
+    else if (group.type === "Group") {
+      // If this is outside the entire zone's bounding box, it must be outside
+      // wall bounding boxes too
+      let boundingBox = group.boundingBox;
+      if (!boundingBox.intersectsBox(hitbox)) return [false, 1];
+
+      // If inside the bounding box, check all the children in zone
+      for (let childMesh of group.children) {
+        let wall = childMesh.parentDef;
+        let ret = intersectsWallGroup(wall);
+        // if intersectsWallGroup(wall) return true;
+        if (ret[0]) return ret;
+      }
+      return [false, 1];
     }
   }
+
+  // Iterate over all groups of walls.
+  for (let wallGroup of walls) {
+
+    let ret = intersectsWallGroup(wallGroup);
+    if (ret[0]) {
+      this.wallSpeed = ret[1];
+      return true;
+    }
+
+    /*
+    if (intersectsWallGroup(wallGroup)) {
+      this.wallSpeed = wallGroup.speed;
+      return true;
+    }
+    */
+  }
+
+  // No intersection found with any wall in any zone
   this.wallSpeed = 1;
   return false;
 }

@@ -79,7 +79,7 @@ function initRenderer() {
   let material1 = new THREE.MeshLambertMaterial({color: 0x447777});
   let mesh1 = new THREE.Mesh(geometry1, material1);
   mesh1.position.set(0,0,-1100);
-  scene.add(mesh1);
+  // scene.add(mesh1);
 
   particleSystem = new THREE.GPUParticleSystem({
     maxParticles: 250000
@@ -130,6 +130,7 @@ function initParticles() {
 
 function initWalls() {
   // create 4 basic walls (heights and relative positions can be changed later)
+  /*
   let wall;
   wall = new Wall({
     length: 30,
@@ -182,6 +183,77 @@ function initWalls() {
   });
   scene.add(wall42.mesh);
   walls.push(wall42);
+  */
+
+  // Iterate over all zones, and add the walls
+  for (let zone in SCENE_WALLS) {
+    let group = new THREE.Group();
+    let zoneWalls = SCENE_WALLS[zone];
+
+    // Add every wall in the zone to a Group
+    // Compute bounding box
+    let min, max, maxThick = 0;
+    for (let wallParams of zoneWalls) {
+
+      // Convert start, end to Vec3s
+      let sXY = wallParams.start;
+      let eXY = wallParams.end;
+
+      let start = new THREE.Vector3(sXY[0], sXY[1], FLOOR_Z);
+      let end   = new THREE.Vector3(eXY[0], eXY[1], FLOOR_Z);
+
+      // Move start and end away from each other by 50 to fix jaggy corners
+      let thickness;
+      if (wallParams.thickness) {
+        thickness = wallParams.thickness;
+      }
+      else {
+        thickness = WALL_DEFAULTS.thickness
+      }
+
+      // Track max thickness for bounding box "fudge factor"
+      if (thickness > maxThick) maxThick = thickness;
+
+      let startToEnd = end.clone().sub(start).normalize().multiplyScalar(thickness/2);
+      end.add(startToEnd);
+      start.add(startToEnd.negate());
+
+      wallParams.start = start;
+      wallParams.end   = end;
+
+      // If start, end outside current bounding box, expand it.
+      if (!min) min = new THREE.Vector3().copy(start);
+      if (!max) max = new THREE.Vector3().copy(start);
+
+      min.min(start);
+      min.min(end);
+
+      max.max(start);
+      max.max(end);
+
+      // Make a new wall, and give its mesh a pointer to parent
+      let wall = new Wall(wallParams);
+      wall.mesh.parentDef = wall;
+
+      group.add(wall.mesh);
+    }
+
+    // Move the min/max points away from each other slightly as fudge factor to account for thickness
+    min.subScalar(maxThick);
+    max.addScalar(maxThick);
+
+    // Set min.z, max.z to -500, -1500 as a catch-all
+    min.z = -1500;
+    max.z = -500;
+
+    let boundingBox = new THREE.Box3(min, max);
+    group.boundingBox = boundingBox;
+
+
+    // TODO Figure out wtf is up with collisions
+    scene.add(group);
+    walls.push(group);
+  }
 }
 
 // Initialize the objective entities
@@ -306,10 +378,20 @@ function updateColors() {
   let MASK_4 = 0xF0F0F0;
   // let MASK_8 = 0xFFFFFF;
 
-  for (let object of scene.children) {
+  // Change the colors of the specified object
+  let changeColors = function(object) {
+    // Recursively check children
+    if (object.children) {
+      for (let child of object.children) {
+        if (child.type && (child.type === "Mesh" || child.type === "Group")) {
+          changeColors(child);
+        }
+      }
+    }
+
     // If this object has no material color (or has an override) ignore it
-    if (!object.material) continue;
-    if (object.material.showTrueColor) continue;
+    if (!object.material) return;
+    if (object.material.showTrueColor) return;
 
     // The first time this object is processed, save its original color
     if (!object.material.trueColor) object.material.trueColor = object.material.color.clone();
@@ -358,6 +440,9 @@ function updateColors() {
 
     object.material.color.copy(retColor);
   }
+
+  // Recursively check entire scene
+  changeColors(scene);
 }
 
 function normalizeLights() {

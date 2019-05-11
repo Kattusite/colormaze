@@ -21,7 +21,8 @@ const WALL_DEFAULTS = {
   rotation: new THREE.Euler(0,0,0),
   start: undefined,
   end: undefined,
-  speed: 0      // Multiplier for speed of players passing through.
+  speed: 0,      // Multiplier for speed of players passing through.
+  visible: true, // false for invisible walls (e.g. pits)
 }
 
 // Speed of 0   = cannot pass through
@@ -54,9 +55,15 @@ params = {
 function Wall(params) {
   // Use the default height and thickness if undefined
   Core.setDefaultProperties(params, WALL_DEFAULTS);
+  this.type = "Wall";
 
   // Create the material
-  this.material = new THREE.MeshLambertMaterial({color: params.color})
+  if (params.visible) {
+    this.material = new THREE.MeshLambertMaterial({color: params.color})
+  }
+  else {
+    this.material = new THREE.ShadowMaterial();
+  }
 
   this.speed = params.speed;
 
