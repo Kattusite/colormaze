@@ -44,7 +44,8 @@ function initKeybindings() {
 function initRenderer() {
   // Initialize the WebGL renderer
   renderer = new THREE.WebGLRenderer({canvas: $('#gameCanvas')[0], antialias: true});
-  renderer.setClearColor(0xa5b6b6);
+  let clearColor = 0xd0e0e0 // 0xa5b6b6;
+  renderer.setClearColor(clearColor);
   renderer.setPixelRatio(window.devicePixelRatio);
 
   let width = window.innerWidth;
@@ -379,7 +380,8 @@ function initWalls() {
     // Build the floor
     let floorDef = {};
     floorDef.geometry = new THREE.ShapeGeometry(floor);
-    floorDef.material = new THREE.MeshLambertMaterial({color: 0x443344});
+    floorDef.material = new THREE.MeshLambertMaterial({color: 0x6c7f7f});
+    floorDef.material.showTrueColor = true;
     floorDef.mesh     = new THREE.Mesh(floorDef.geometry, floorDef.material);
     floorDef.type = "Floor";
     floorDef.mesh.parentDef = floorDef;
