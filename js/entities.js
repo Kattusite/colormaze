@@ -191,11 +191,14 @@ Player.prototype.hitFor = function(dmg) {
 
 
   options.color = alv.lerp(ded, healthPercent);
+  options.lifetime *= 0.7
+  options.color.multiplyScalar(0.7);
 
   // TODO: Quicken pulsing as health lowers
   this.pulseRate = 1 + 3 * (1 - healthPercent);
   if (this.health <= 0) {
     this.pulseRate = 0;
+    options.lifetime = 0;
   }
 }
 
