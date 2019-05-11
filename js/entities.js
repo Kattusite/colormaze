@@ -48,13 +48,25 @@ function intersectsWall() {
       if (!boundingBox.intersectsBox(hitbox)) return [false, 1];
 
       // If inside the bounding box, check all the children in zone
+      let minSpeed = 9e99; // min speed of all intersected walls
       for (let childMesh of group.children) {
         let wall = childMesh.parentDef;
         let ret = intersectsWallGroup(wall);
         // if intersectsWallGroup(wall) return true;
-        if (ret[0]) return ret;
+        // If we intersected a wall:
+        if (ret[0]) {
+          // Check if this wall's passage speed is slower than current. If so, store it
+          if (ret[1] < minSpeed) minSpeed = ret[1];
+
+          // If we get to 0 speed, we can't pass -- return
+          if (minSpeed == 0) return [true, minSpeed];
+          // return ret;
+        }
       }
-      return [false, 1];
+      // If minSpeed unchanged, no intersections took place!
+      if (minSpeed == 9e99) return [false, 1];
+      else return [true, minSpeed];
+      // return [false, 1];
     }
   }
 
