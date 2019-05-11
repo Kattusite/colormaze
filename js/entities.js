@@ -1,4 +1,7 @@
 
+const ded = new THREE.Color(0x8c3a3a);
+const alv = new THREE.Color(0x22ff88);
+
 /******************************************************************************/
 /**                      Entities                                            **/
 /**                                                                          **/
@@ -180,16 +183,23 @@ Player.prototype.hitFor = function(dmg) {
     this.health = 0;
   }
 
+
   // TODO: Darken color as health lowers
   let healthPercent = this.health / this.maxHealth;
   let newColor = new THREE.Color(this.origColor).offsetHSL(0,0,-(1-healthPercent));
   this.material.color.copy(newColor);
   this.material.trueColor.copy(newColor);
 
+
+  options.color = alv.lerp(ded, healthPercent);
+  options.lifetime *= 0.7
+  options.color.multiplyScalar(0.7);
+
   // TODO: Quicken pulsing as health lowers
   this.pulseRate = 1 + 3 * (1 - healthPercent);
   if (this.health <= 0) {
     this.pulseRate = 0;
+    options.lifetime = 0;
   }
 }
 

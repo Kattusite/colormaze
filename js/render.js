@@ -121,7 +121,7 @@ function initRenderer() {
     positionRandomness: 0.4,
     velocity: new THREE.Vector3(),
     velocityRandomness: .5,
-    color: 0x22ff88,
+    color: alv,
     colorRandomness: .2,
     turbulence: .5,
     lifetime: 0,
