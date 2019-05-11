@@ -80,10 +80,9 @@ var SCENE_OBJECTIVES = {
     position: new THREE.Vector3(200,-600, PLAYER_Z),
     params: {
       color: 0x808080,
-      animate: function() {
-        let L = (Math.sin(time / 3000) / 2) + 0.5;
-        let newColor = ditherRGB(L,L,L,256, true);
-        this.material.color.copy(newColor);
+      init: function(self) {
+        // let particles = new THREE.GPUParticleSystem({maxParticles: 20000});
+        // self.mesh.add(particles);
       },
       onUnlock: function() {
         options.lifetime = 4;

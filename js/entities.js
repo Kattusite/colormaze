@@ -113,6 +113,7 @@ function Player() {
   this.mesh.position.add(new THREE.Vector3(0,0,PLAYER_Z));
 
   this.position = this.mesh.position;
+  this.canMove = true;
 
   // How quickly does the player move?
   this.speed = 10;  // 5 for gameplay, 10 for testing
@@ -134,7 +135,7 @@ Player.prototype.animate = function() {
     let action = KEY_BINDINGS[key];
 
     // If a move action is active, move the player in the relevant direction.
-    if (action.type === MOVE) {
+    if (action.type === MOVE && player.canMove) {
       let motion = action.vector.clone().multiplyScalar(this.speed);
       let prevPosition = this.mesh.position.clone();
       this.mesh.position.add(motion);
@@ -372,7 +373,7 @@ function Objective(position, unlock, params) {
   this.dead = false;
 
   // If there are any other things specified to to in params, do them
-  if (params.init) params.init();
+  if (params.init) params.init(this);
   if (params.animate) this.extraAnimation = params.animate;
   if (params.onUnlock) this.onUnlock = params.onUnlock;
 }
