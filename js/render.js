@@ -59,6 +59,10 @@ function initRenderer() {
   if (flat) camera = camera2d;
   else      camera = camera3d;
 
+  controls = new THREE.OrbitControls(camera3d, renderer.domElement);
+  controls.minDistance = 100;
+  controls.maxDistance = 500;
+
   scene = new THREE.Scene();
 
   // Add lights (playing with these leads to super cool effects)
@@ -116,6 +120,7 @@ function initEntities() {
   // Add a playable cube to the scene
   player = new Player();
   scene.add(player.mesh);
+  controls.target = player.position;
   // entities.push(player); // NOTE: The player should not be included in the entities array
 
   // Add 4 intro shooters
@@ -317,6 +322,7 @@ function render() {
   // Not needed as long as colors are toggled and no new objs added
   updateColors();
 
+  // particle stuff
   var delta = clock.getDelta() * spawnerOptions.timeScale;
   tick += delta;
   if (tick < 0) tick = 0;
@@ -328,9 +334,12 @@ function render() {
   }
   particleSystem.update(tick);
 
+  // camera stuff
+  controls.update();
 
   // Render the scene repeatedly
   renderer.render(scene, camera);
+  controls.target = player.position;
   requestAnimationFrame(render);
 }
 
