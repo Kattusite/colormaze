@@ -351,7 +351,8 @@ const OBJECTIVE_DEFAULTS = {
   tubeSegments: 100,
   radialSegments: 16,
   init: undefined,
-  animate: undefined
+  animate: undefined,
+  onUnlock: undefined,
 }
 
 
@@ -373,6 +374,7 @@ function Objective(position, unlock, params) {
   // If there are any other things specified to to in params, do them
   if (params.init) params.init();
   if (params.animate) this.extraAnimation = params.animate;
+  if (params.onUnlock) this.onUnlock = params.onUnlock;
 }
 
 // Function to animate the projectile every frame.
@@ -385,6 +387,9 @@ Objective.prototype.animate = function() {
 
     // Update anything that might need to get updated when objectives change
     updateColors();
+    if (this.onUnlock) {
+      this.onUnlock();
+    }
 
     this.dead = true;
   }
