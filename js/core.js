@@ -54,7 +54,7 @@ const PLAYER_Z = FLOOR_Z + PLAYER_SIZE / 2;  // For players, objectives, entitie
 var objectives = {
   // Player options
   pulse:          false,
-  particles:      false,
+  // particles:      false,
   // Camera + light options
   lighting:       false,
   perspective:    false,
