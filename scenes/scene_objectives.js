@@ -20,7 +20,7 @@ var SCENE_OBJECTIVES = {
     }
   },
   "green": {
-    position: new THREE.Vector3(-400,-600, PLAYER_Z),
+    position: new THREE.Vector3(1300,1000, PLAYER_Z),
     params: {
       color: 0x7aea52,
     }
@@ -39,7 +39,7 @@ var SCENE_OBJECTIVES = {
     }
   },
   "blue": {
-    position: new THREE.Vector3(-200,-600, PLAYER_Z),
+    position: new THREE.Vector3(1700, 1000, PLAYER_Z),
     params: {
       color: 0x52b5ea,
     }
@@ -58,7 +58,7 @@ var SCENE_OBJECTIVES = {
     }
   },
   "red": {
-    position: new THREE.Vector3(0,-600, PLAYER_Z),
+    position: new THREE.Vector3(900, 1000, PLAYER_Z),
     params: {
       color: 0xea5254,
     }
@@ -77,7 +77,7 @@ var SCENE_OBJECTIVES = {
     }
   },
   "coolParticles": {
-    position: new THREE.Vector3(200,-600, PLAYER_Z),
+    position: new THREE.Vector3(1100,750, PLAYER_Z),
     params: {
       color: 0x808080,
       init: function(self) {
@@ -90,9 +90,9 @@ var SCENE_OBJECTIVES = {
     }
   },
 
-  // Actual game ones
+  // Actual game ones, in new positions
   "pulse": {
-    position: new THREE.Vector3(600, 550, PLAYER_Z),
+    position: new THREE.Vector3(0, 550, PLAYER_Z),
     params: {
       color: 0x808080,
       animate: function() {
@@ -101,10 +101,110 @@ var SCENE_OBJECTIVES = {
       },
     }
   },
-  "gray": {
+  "sound": { //does nothing yet
+    position: new THREE.Vector3(750, 550, PLAYER_Z),
+    params: {
+      color: 0x808080,
+      animate: function() {
+        let factor = 1 + 0.2 * Math.sin(time / 500);
+        this.mesh.scale.set(1,1,1).multiplyScalar(factor);
+      },
+    }
+  },
+  "3d": { //does nothing yet
+    position: new THREE.Vector3(1000, -300, PLAYER_Z),
+    params: {
+      color: 0x808080,
+      animate: function() {
+        let factor = 1 + 0.2 * Math.sin(time / 500);
+        this.mesh.scale.set(1,1,1).multiplyScalar(factor);
+      },
+    }
+  },
+  "red": {
+    position: new THREE.Vector3(900, 1000, PLAYER_Z),
+    params: {
+      color: 0xea5254,
+    }
+  },
+  "green": {
+    position: new THREE.Vector3(1300,1000, PLAYER_Z),
+    params: {
+      color: 0x7aea52,
+    }
+  },
+  "blue": {
+    position: new THREE.Vector3(1700, 1000, PLAYER_Z),
+    params: {
+      color: 0x52b5ea,
+    }
+  },
+  "gray": { //opens door
     position: new THREE.Vector3(2100, 1200, PLAYER_Z),
     params: {
       color: 0x808080,
+    }
+  },
+  "coolParticles": {
+    position: new THREE.Vector3(1100,750, PLAYER_Z),
+    params: {
+      color: 0x808080,
+      init: function(self) {
+        // let particles = new THREE.GPUParticleSystem({maxParticles: 20000});
+        // self.mesh.add(particles);
+      },
+      onUnlock: function() {
+        options.lifetime = 4;
+      }
+    }
+  },
+  "bit2": {
+    position: new THREE.Vector3(1500,750, PLAYER_Z),
+    params: {
+      color: 0x808080,
+      tubeSegments: 10,
+      radialSegments: 3,
+      animate: function() {
+        let L = (Math.sin(time / 3000) / 2) + 0.5;
+        let newColor = ditherRGB(L,L,L,4, true);
+        this.material.color.copy(newColor);
+      }
+    }
+  },
+  "bit4": {
+    position: new THREE.Vector3(1300,1200, PLAYER_Z),
+    params: {
+      color: 0x808080,
+      tubeSegments: 20,
+      radialSegments: 6,
+      animate: function() {
+        let L = (Math.sin(time / 3000) / 2) + 0.5;
+        let newColor = ditherRGB(L,L,L,16, true);
+        this.material.color.copy(newColor);
+      }
+    }
+  },
+  "bit8": {
+    position: new THREE.Vector3(900,1200, PLAYER_Z),
+    params: {
+      color: 0x808080,
+      tubeSegments: 30,
+      radialSegments: 9,
+      animate: function() {
+        let L = (Math.sin(time / 3000) / 2) + 0.5;
+        let newColor = ditherRGB(L,L,L,256, true);
+        this.material.color.copy(newColor);
+      }
+    }
+  },
+  "temp": { //does nothing yet
+    position: new THREE.Vector3(1800, 1200, PLAYER_Z),
+    params: {
+      color: 0x808080,
+      animate: function() {
+        let factor = 1 + 0.2 * Math.sin(time / 500);
+        this.mesh.scale.set(1,1,1).multiplyScalar(factor);
+      },
     }
   },
 };
