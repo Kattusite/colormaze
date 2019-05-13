@@ -85,12 +85,14 @@ function initRenderer() {
   // BUild an "infinite" floor
 
   let floor = {};
-  floor.geometry = new THREE.PlaneGeometry(100000, 100000);
+  let inf = 100000;
+  floor.geometry = new THREE.PlaneGeometry(inf, inf);
   floor.material = new THREE.MeshLambertMaterial(0x443344);
   let texture = new THREE.TextureLoader().load( "textures/granite.jpg" );
   texture.wrapS = THREE.RepeatWrapping;
   texture.wrapT = THREE.RepeatWrapping;
-  let n = 100;
+  let imgSize = 500;
+  let n = inf / imgSize;
   texture.repeat.set( n,n );
   floor.material.map = texture;
 
