@@ -11,7 +11,7 @@
 
 // Near and far viewing plane constants
 const NEAR = 0.1;
-const FAR = 3000;
+const FAR = 5000;
 
 /******************************************************************************/
 /**                      INITIALIZERS                                        **/
