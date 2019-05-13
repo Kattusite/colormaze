@@ -17,6 +17,8 @@ var entities = [];
 var walls = [];
 var activeLights = {};
 
+var floor;
+
 // The current time in ms
 var time;
 var clock = new THREE.Clock();

@@ -84,7 +84,7 @@ function initRenderer() {
 
   // BUild an "infinite" floor
 
-  let floor = {};
+  floor = {};
   let inf = 100000;
   floor.geometry = new THREE.PlaneGeometry(inf, inf);
   floor.material = new THREE.MeshLambertMaterial(0x443344);
@@ -427,6 +427,9 @@ function render() {
 
   // Animate the player
   player.animate();
+
+  // move the floor
+  floor.mesh.rotation.z += 0.0001;
 
   // Loop over all entities, animating them, and culling out any that died
   let newEntities = [];
