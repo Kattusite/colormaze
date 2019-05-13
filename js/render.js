@@ -83,14 +83,14 @@ function initRenderer() {
   //scene.fog = fog;
 
   // BUild an "infinite" floor
-  /*
+
   let floor = {};
   floor.geometry = new THREE.PlaneGeometry(100000, 100000);
   floor.material = new THREE.MeshLambertMaterial(0x443344);
   floor.mesh     = new THREE.Mesh(floor.geometry, floor.material);
   floor.mesh.position.set(0,0,-2000);
   scene.add(floor.mesh);
-  */
+
 
   // Add lights (playing with these leads to super cool effects)
   scene.add(ambientWhite);
