@@ -68,6 +68,18 @@ function initRenderer() {
     controls.enabled = true;
   }
 
+  let listener = new THREE.AudioListener();
+  camera2d.add(listener);
+
+  sound = new THREE.Audio(listener);
+  let audioLoader = new THREE.AudioLoader();
+  audioLoader.load( 'sounds/onmyway.mp3', function( buffer ) {
+  	sound.setBuffer( buffer );
+  	sound.setLoop( true );
+  	sound.setVolume( 0.5 );
+  	// sound.play();
+  });
+
   controls.minDistance = 1000;
   controls.maxDistance = 1000;
   controls.maxAzimuthAngle = Math.PI / 8;
@@ -661,15 +673,7 @@ function handleKeypress(event) {
 
   // Change the camera perspective
   if (action.type == SHIFT) {
-    flat = !flat;
-    if (flat) {
-      camera = camera2d;
-      controls.enabled = false;
-    }
-    else {
-      camera = camera3d;
-      controls.enabled = true;
-    }
+    shiftCamera();
   }
   else if (action.type == ADD_LIGHT) {
     let uuid = action.light.uuid;
@@ -697,6 +701,9 @@ function handleKeypress(event) {
   }
   else if (action.type == UNLOCK_ALL) {
     unlockAllObjectives();
+  }
+  else if (action.type == GODMODE) {
+    player.canDie = false;
   }
 }
 

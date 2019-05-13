@@ -37,7 +37,10 @@ function intersectsWall() {
           // If unlocked, allow through at wall's speed
           if (objectives[group.unlockedBy]) return [true, group.speed];
           // Otherwise, door is locked, do not allow through at all
-          else                              return [true, 0];
+          else {
+            showMessage(`The door is locked... You'll need to find a ${group.unlockedBy} relic to pass.`);
+            return [true, 0];
+          }
         }
         // For walls that aren't unlockable just return their standard speed
         else return [true, group.speed];
@@ -181,6 +184,11 @@ Player.prototype.hitFor = function(dmg) {
   this.health -= dmg;
   if (this.health <= 0) {
     this.health = 0;
+    if (!this.canDie) this.health = 1;
+  }
+
+  if (this.health == 0) {
+    endGame();
   }
 
 
@@ -382,6 +390,9 @@ function Objective(position, unlock, params) {
   this.unlock = unlock;
   this.dead = false;
 
+  if (!params.name) params.name = this.unlock;
+  this.name = params.name;
+
   // If there are any other things specified to to in params, do them
   if (params.init) params.init(this);
   if (params.animate) this.extraAnimation = params.animate;
@@ -401,6 +412,13 @@ Objective.prototype.animate = function() {
     if (this.onUnlock) {
       this.onUnlock();
     }
+
+    // Show a message announcing the pickup!
+    let name = this.name
+    let msg = `You found the ${name} relic!`
+    let slowdown = 1;
+    player.speed *= slowdown;
+    showMessage(msg, 2000, function() {player.speed /= slowdown});
 
     this.dead = true;
   }

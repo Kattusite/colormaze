@@ -31,6 +31,8 @@ var flat = true;
 var camera; // The camera currently being used (either camera2d, camera3d)
 var camera2d; // The 2d orthographic camera
 var camera3d; // The 3d perspective camera
+var listener; // the audio listener
+var sound;    // the audio
 var controls; // controls for camera rotation
 
 // Ambient Lights
@@ -82,6 +84,20 @@ var objectives = {
 // The player object
 var player;
 
+
+// Shift the camera perspective
+function shiftCamera() {
+  flat = !flat;
+  if (flat) {
+    camera = camera2d;
+    controls.enabled = false;
+  }
+  else {
+    camera = camera3d;
+    controls.enabled = true;
+  }
+}
+
 /******************************************************************************/
 /**                      ACTIONS  & KEYBINDINGS                              **/
 /**                                                                          **/
@@ -100,13 +116,15 @@ const SHIFT   = "change perspective";
 const ADD_LIGHT = "add light";
 const REM_LIGHT = "remove light";
 
-const UNLOCK_ALL = "unlock all"
+const UNLOCK_ALL = "unlock all";
+
+const GODMODE = "godmode";
 
 // Actions that happen in every frame the key is held
 const CONTINUING_ACTIONS = [MOVE];
 
 // Actions that happen once every time the key is pushed and released
-const INSTANT_ACTIONS = [SHIFT, ADD_LIGHT, REM_LIGHT, UNLOCK_ALL];
+const INSTANT_ACTIONS = [SHIFT, ADD_LIGHT, REM_LIGHT, UNLOCK_ALL, GODMODE];
 
 // Definitions of all the actions
 const ACTIONS = [
@@ -151,7 +169,11 @@ const ACTIONS = [
   {
     boundKeys:    ["`"],
     type:         UNLOCK_ALL
-  }
+  },
+  {
+    boundKeys:    ["q"],
+    type:         GODMODE
+  },
 ];
 
 const KEY_BINDINGS = {};
