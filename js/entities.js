@@ -116,7 +116,7 @@ function Player() {
   this.mesh.position.add(new THREE.Vector3(0,0,PLAYER_Z));
 
   this.position = this.mesh.position;
-  this.canMove = true;
+  this.canMove = false;
 
   // How quickly does the player move?
   this.speed = 10;  // 5 for gameplay, 10 for testing

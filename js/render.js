@@ -87,6 +87,14 @@ function initRenderer() {
   let floor = {};
   floor.geometry = new THREE.PlaneGeometry(100000, 100000);
   floor.material = new THREE.MeshLambertMaterial(0x443344);
+  let texture = new THREE.TextureLoader().load( "textures/granite.jpg" );
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  let n = 100;
+  texture.repeat.set( n,n );
+  floor.material.map = texture;
+
+
   floor.mesh     = new THREE.Mesh(floor.geometry, floor.material);
   floor.mesh.position.set(0,0,-2000);
   scene.add(floor.mesh);

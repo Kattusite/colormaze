@@ -23,14 +23,15 @@
     src="https://code.jquery.com/jquery-3.4.1.min.js"
     integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
     crossorigin="anonymous"></script>
+  <script src=lin/jquery-ui.min.js></script>
+  <link rel="stylesheet" href=lib/jquery-ui.min.css>
 
 
   <!-- Our files -->
   <link rel="stylesheet" href="css/styles.css">
-  <script src="js/messages.js"></script>
-
-
   <script src=js/core.js></script>
+
+  <script src="js/messages.js"></script>
   <script src=js/entities.js></script>
   <script src=js/environment.js></script>
 
@@ -46,9 +47,15 @@
   <body onload="init()">
 
     <canvas id="gameCanvas"></canvas>
-    <!--<div class="curtain"></div>-->
-    <div class="msg side" id="objective"></div>
-    <div class="msg center" id="popup">Example message</div>
+
+    <div class="curtain">
+      <div class="startButton" onclick="startGame()">
+        <div class="startText">Start Game</div>
+      </div>
+    </div>
+
+    <div class="msg side hidden" id="objective"></div>
+    <div class="msg center" style="z-index: -99; opacity: 0" id="popup">Example message</div>
 
   </body>
 </html>

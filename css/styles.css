@@ -12,9 +12,13 @@
 }
 
 .center {
-  top: 120px;
-  width: 30%;
-  left: 400px; /* fix this later */
+  margin:auto;
+  top: 10%;
+  left: 0;
+  right: 0;
+  width: 50%;
+
+  font-family: monospace;
 }
 
 .side {
@@ -31,5 +35,41 @@
   display: block;
   width: 100%;
   height: 100%;
-  background-color: #1f000010;
+  background-color: #000000;
+  opacity: 1.0;
+}
+
+.startButton {
+  display: block;
+  position: absolute;
+  width: 35%;
+  height: 25%;
+
+  background-color: #65af56;
+  border: 8px solid #487041;
+  border-radius: 10px;
+
+  top: 20%;
+  left: 0;
+  right: 0;
+  margin: auto;
+}
+
+.startText {
+  position: relative;
+  top: 30px;
+
+  margin: auto;
+  vertical-align: middle;
+  color: #3c5640;
+  font-size: 45px;
+
+  text-align: center;
+  vertical-align: middle;
+
+  font-family: monospace;
+}
+
+.hidden {
+  display: none;
 }
