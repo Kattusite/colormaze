@@ -157,9 +157,7 @@ var SCENE_OBJECTIVES = {
       },
       onUnlock: function() {
         player.addLight();
-        for (let invWall of invisibleWalls) {
-          invWall.material.opacity = 0.35;
-        }
+        showInvisibleWalls();
       }
     }
   },

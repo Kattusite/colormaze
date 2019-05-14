@@ -743,6 +743,44 @@ function handleKeypress(event) {
     player.canDie = false;
     player.canMove = true;
   }
+  else if (action.type == LOCK_ALL) {
+    for (let x in objectives) {
+      objectives[x]=false;
+    }
+  }
+  // for demoing
+  else if (action.type == UNLOCK_NEXT) {
+    player.healFor(100);
+    for (let x in objectives) {
+      if (!objectives[x]) {
+        objectives[x] = true;
+        if (x == "sounds") {
+          sound.play();
+        }
+        if (x == "galaxy") {
+          addGalaxyFloor();
+        }
+        else if (x == "perspective") {
+          shiftCamera();
+        }
+        else if (x == "flatLight") {
+          scene.add(pointWhite);
+          ambientWhite.intensity = 0.8;
+        }
+        else if (x == "playerLight") {
+          player.addLight();
+          showInvisibleWalls();
+        }
+        else if (x == "coolParticles") {
+          options.lifetime = 4;
+        }
+        return;
+      }
+    }
+  }
+  else if(action.type == SCREENSHOT ){
+    takeScreenshot();
+  }
 }
 
 // Update the camera and renderer parameters when the window changes size

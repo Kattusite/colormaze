@@ -68,31 +68,40 @@ var objectives = {
   // Player options
   pulse:          false,
   // particles:      false,
-  // Camera + light options
-  lighting:       false,
-  perspective:    false,
-  perspective2:   false,
+
+  sounds:         false,
+
   // Color options
   gray:           false,
-  red:            false,
+
   green:          false,
-  blue:           false,
   bit2:           false,
+
+  blue:           false,
   bit4:           false,
+
+  red:            false,
   bit8:           false,
 
-  // Stretch goals
-  sounds:         false,
-  jump:           false,
+  galaxy:         false,
+
+  // Camera + light options
+  perspective:    false,
 
   //
-  galaxy:         false,
+
   flatLight:      false,
+
   playerLight:    false,
 
   // particle stuff
   coolParticles:  false,
-  lameParticles:  false,
+
+  // unused
+  // lameParticles:  false,
+  // jump: false,
+  // perspective2: false,
+  // lighting: false,
 
   // used for trap sequence in stage 3
   "disable traps":   true,
@@ -144,6 +153,10 @@ const ADD_LIGHT = "add light";
 const REM_LIGHT = "remove light";
 
 const UNLOCK_ALL = "unlock all";
+const LOCK_ALL = "lock all";
+const UNLOCK_NEXT = "unlock next";
+
+const SCREENSHOT= "screenshot";
 
 const GODMODE = "godmode";
 
@@ -151,7 +164,7 @@ const GODMODE = "godmode";
 const CONTINUING_ACTIONS = [MOVE];
 
 // Actions that happen once every time the key is pushed and released
-const INSTANT_ACTIONS = [SHIFT, ADD_LIGHT, REM_LIGHT, UNLOCK_ALL, GODMODE];
+const INSTANT_ACTIONS = [SHIFT, ADD_LIGHT, REM_LIGHT, UNLOCK_ALL, GODMODE, SCREENSHOT, LOCK_ALL, UNLOCK_NEXT];
 
 // Definitions of all the actions
 const ACTIONS = [
@@ -201,6 +214,18 @@ const ACTIONS = [
     boundKeys:    ["q"],
     type:         GODMODE
   },
+  {
+    boundKeys: ["1"],
+    type:       LOCK_ALL,
+  },
+  {
+    boundKeys: ["'"],
+    type:       SCREENSHOT,
+  },
+  {
+    boundKeys: ["2"],
+    type: UNLOCK_NEXT
+  }
 ];
 
 const KEY_BINDINGS = {};
@@ -225,5 +250,26 @@ Core.setDefaultProperties = function(target, def) {
         // Copy basic properties
         else target[key] = def[key];
       }
+  }
+}
+
+// Thanks to a jsfiddler https://jsfiddle.net/2pha/art388yv/ for this code
+function takeScreenshot() {
+
+    // open in new window like this
+    //
+    var w = window.open('', '');
+    w.document.title = "Screenshot";
+    //w.document.body.style.backgroundColor = "red";
+    var img = new Image();
+    // Without 'preserveDrawingBuffer' set to true, we must render now
+    renderer.render(scene, camera);
+    img.src = renderer.domElement.toDataURL();
+    w.document.body.appendChild(img);
+  }
+
+function showInvisibleWalls() {
+  for (let invWall of invisibleWalls) {
+    invWall.material.opacity = 0.35;
   }
 }
