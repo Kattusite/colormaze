@@ -44,6 +44,10 @@ var ambientBlue   = new THREE.AmbientLight(0x0000ff, 1);
 // Point Lights
 var pointWhite = new THREE.PointLight(0xffffff, 1);
 
+// lame particles
+var materials = [];
+var parameters;
+
 // Z-coordinate of the "floor" of the simulation
 const FLOOR_Z = -1000; // For walls
 const PLAYER_SIZE = 50;

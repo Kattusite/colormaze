@@ -192,6 +192,43 @@ function initParticles() {
       verticalSpeed: 1.33,
       timeScale: 8
   };
+
+  var geometry =  new THREE.BufferGeometry();
+  var vertices = [];
+  for (let i = 0; i < 1000; i++) {
+    let x = Math.random() * 2 - 1;
+    let y = Math.random() * 2 - 1;
+    let z = 0;
+    vertices.push(x, y, z);
+  }
+  geometry.addAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+  parameters = [
+    [[1.0, 0.2, 0.5], 20],
+    [[0.95, 0.1, 0.5], 15],
+    [[0.90, 0.05, 0.5], 10],
+    [[0.85, 0, 0.5], 8],
+    [[0.80, 0, 0.5], 5]
+  ];
+
+  for ( var i = 0; i < parameters.length; i ++ ) {
+
+    var color = parameters[i][0];
+    var size = parameters[i][1];
+
+    materials[i] = new THREE.PointsMaterial({
+      size: size,
+      blending: THREE.AdditiveBlending,
+      depthTest: false,
+      transparent: true
+    });
+    materials[i].color.setHSL(color[0], color[1], color[2]);
+
+    var particles = new THREE.Points(geometry, materials[i]);
+
+    particles.rotation.x = Math.random() * 6;
+    particles.rotation.y = Math.random() * 6;
+    particles.rotation.z = Math.random() * 6;
+  }
 }
 
 function initWalls() {
