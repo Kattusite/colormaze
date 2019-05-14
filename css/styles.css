@@ -53,6 +53,15 @@
   left: 0;
   right: 0;
   margin: auto;
+
+  cursor: pointer;
+
+}
+
+.startButton:hover {
+  background-color: #8fd18a;
+  border: 8px solid #487041;
+  border-radius: 25px;
 }
 
 .startText {
@@ -86,4 +95,12 @@
   font-size: x-large;
   border-radius: 5px;
   font-family: monospace;
+}
+
+.writeupLink:hover {
+  background-color: #ccc;
+  border-radius: 15px;
+  color: #666;
+
+  cursor: pointer;
 }
