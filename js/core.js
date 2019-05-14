@@ -189,7 +189,7 @@ var Core = {};
 // Copy the properties defined in default into target if they are not already defined
 Core.setDefaultProperties = function(target, def) {
   for (let key in def) {
-      if (!target[key]) {
+      if (target[key] === undefined) {
         // If it's a cloneable property (like a vector, clone it to be safe)
         if (def[key] && def[key].clone) {
           target[key] = def[key].clone();

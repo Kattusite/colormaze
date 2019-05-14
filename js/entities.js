@@ -121,10 +121,10 @@ function Player() {
   this.material = new THREE.MeshLambertMaterial({color: this.origColor});
   this.mesh = new THREE.Mesh(this.geometry, this.material);
   this.mesh.position.add(new THREE.Vector3(0,0,PLAYER_Z));
-  var light = new THREE.PointLight(0x00ff00, 1, 500);
-  light.position.add(new THREE.Vector3(0, 0, 30));
+  this.light = new THREE.PointLight(0x00ff00, 1, 500);
+  this.light.position.add(new THREE.Vector3(0, 0, 30));
 
-  this.mesh.add(light);
+  // this.mesh.add(light);
 
   this.position = this.mesh.position;
   this.canMove = false;
@@ -138,6 +138,14 @@ function Player() {
   // How much health does the player have?
   this.maxHealth = 100;
   this.health = this.maxHealth;
+}
+
+Player.prototype.addLight = function() {
+  this.mesh.add(this.light);
+}
+
+Player.prototype.remLight = function() {
+  this.mesh.remove(this.light);
 }
 
 Player.prototype.animate = function() {
@@ -207,7 +215,7 @@ Player.prototype.hitFor = function(dmg) {
   this.material.trueColor.copy(newColor);
 
   let lightColor = green.lerp(red, healthPercent);
-  this.mesh.children[0].color = lightColor;
+  this.light.color = lightColor;
 
 
   options.color = aliveColor.lerp(deadColor, healthPercent);
@@ -271,7 +279,7 @@ Shooter.prototype.animate = function() {
   let timeLeft = (this.nextShot - time) / (this.nextShot - this.prevShot);
   if (Math.floor(timeLeft * 20) % 3 == 0) {
     let currentColor = enemyColor.clone().lerp(white, timeLeft);
-    this.material.color = currentColor;
+    // this.material.color = currentColor; // this causes undesirable flickering. wait until next rendering call
     this.material.trueColor = currentColor;
   }
 

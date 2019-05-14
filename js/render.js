@@ -111,7 +111,7 @@ function initRenderer() {
 
   floor.mesh     = new THREE.Mesh(floor.geometry, floor.material);
   floor.mesh.position.set(0,0,-2000);
-  scene.add(floor.mesh);
+  // scene.add(floor.mesh);
 
 
   // Add lights (playing with these leads to super cool effects)
@@ -152,21 +152,36 @@ function initEntities() {
   // Add 4 intro shooters
   let shooter;
 
-  shooter = new Shooter(1100, 1200, PLAYER_Z);
-  scene.add(shooter.mesh);
-  entities.push(shooter);
+  let makeShooters = function(coords) {
+    for (let c of coords) {
+      shooter = new Shooter(c[0], c[1], PLAYER_Z);
+      scene.add(shooter.mesh);
+      entities.push(shooter);
+    }
+  }
 
-  shooter = new Shooter(1500, 1200, PLAYER_Z);
-  scene.add(shooter.mesh);
-  entities.push(shooter);
+  let stages = {
+    "intro" : [
+      [1100, 1200],
+      [1500, 1200],
+      [1300, 800],
+      [1700, 800],
+    ],
+    "stage2": [
+      [1350, 150],
+      [1350, 200],
+      [1350, 250],
+      [2700, 450],
+      [2700, 500],
+      [2700, 550],
+    ],
+  }
 
-  shooter = new Shooter(1300, 800, PLAYER_Z);
-  scene.add(shooter.mesh);
-  entities.push(shooter);
-
-  shooter = new Shooter(1700, 800, PLAYER_Z);
-  scene.add(shooter.mesh);
-  entities.push(shooter);
+  // Initialize shooters
+  for (let stage in stages) {
+    let coords = stages[stage];
+    makeShooters(coords);
+  }
 }
 
 function initParticles() {
@@ -195,62 +210,6 @@ function initParticles() {
 }
 
 function initWalls() {
-  // create 4 basic walls (heights and relative positions can be changed later)
-  /*
-  let wall;
-  wall = new Wall({
-    length: 30,
-    thickness: 400,
-    height: 80,
-    position: new THREE.Vector3(-800, 0, FLOOR_Z),
-    color: 0x4182ea
-  });
-  walls.push(wall);
-  scene.add(wall.mesh);
-
-  wall = new Wall({
-    length: 20,
-    thickness: 700,
-    height: 80,
-    position: new THREE.Vector3(800, 0, FLOOR_Z),
-    color: 0x41ea74
-  });
-  walls.push(wall);
-  scene.add(wall.mesh);
-
-  wall = new Wall({
-    length: 500,
-    thickness: 50,
-    height: 80,
-    position: new THREE.Vector3(0, -500, FLOOR_Z),
-    color: 0xea9641,
-  });
-  walls.push(wall);
-  scene.add(wall.mesh);
-
-  wall = new Wall({
-    length: 300,
-    thickness: 40,
-    height: 80,
-    position: new THREE.Vector3(100, 400, FLOOR_Z),
-    color: 0xea41bd
-  });
-  walls.push(wall);
-  scene.add(wall.mesh);
-
-
-  // Wall testing: remove me later
-  let wall42 = new Wall({
-    start: new THREE.Vector3(150,500,FLOOR_Z),
-    end:   new THREE.Vector3(150,0,FLOOR_Z),
-    // height: 200,0
-    // thickness: 20,
-    color: 0x884444
-  });
-  scene.add(wall42.mesh);
-  walls.push(wall42);
-  */
-
 
   // Iterate over all zones, and add the walls
   for (let zone in SCENE_WALLS) {
@@ -259,7 +218,9 @@ function initWalls() {
 
     // Add every wall in the zone to a Group
     // Compute bounding box
-    let min, max, maxThick = 0;
+    let min = undefined;
+    let max = undefined;
+    let maxThick = 0;
 
     // If a wall has an undefined start, then its start is assumed to be lastEnd
     // (the end of the previous wall)
@@ -299,10 +260,40 @@ function initWalls() {
       // where adjacent walls would intersect and clip
       let thickness;
       if (wallParams.thickness)   thickness = wallParams.thickness;
-      else                        thickness = WALL_DEFAULTS.thickness
+      else                        thickness = WALL_DEFAULTS.thickness;
 
       // Track max thickness for bounding box "fudge factor"
       if (thickness > maxThick) maxThick = thickness;
+
+      // If color wasn't defined explicitly, make it a slight variant of prev. color
+      if (wallParams.color === undefined && prevParams && prevParams.color !== undefined) {
+        let oldColor = new THREE.Color(prevParams.color);
+
+        // Modify a color to be a random nearby color
+        let randomwalkColor = function(color) {
+          let hsl = {};
+          oldColor.getHSL(hsl);
+
+          let rand = function() {
+            return 0.1 * (Math.random() - 0.5);
+          }
+
+          let clamp = function(x) {
+            if (x < 0) return 0;
+            if (x > 1) return 1;
+            return x;
+          }
+
+          let h = (hsl.h + rand()) % 1;
+          let s = clamp(hsl.s + rand());
+          let l = clamp(hsl.l + rand());
+
+          color.setHSL(h,s,l);
+          return color;
+        }
+
+        wallParams.color = randomwalkColor(oldColor).getHex();
+      }
 
       // Fill in the misisng peg on the start cell of the wall if in line mode
       // Interpolate the color and the wall height
@@ -322,8 +313,10 @@ function initWalls() {
 
         // Get the height of each adj. wall, using defaults if undefined
         let pegHeights = [];
-        if (next.height) pegHeights.push(next.height);
-        if (prev.height) pegHeights.push(prev.height);
+        if (next.height)    pegHeights.push(next.height);
+        else if (next.flat) pegHeights.push(0);
+        if (prev.height)    pegHeights.push(prev.height);
+        else if (prev.flat) pegHeights.push(0);
         while (pegHeights.length < 2) {
           pegHeights.push(WALL_DEFAULTS.height);
         }
@@ -372,6 +365,13 @@ function initWalls() {
 
       max.max(start);
       max.max(end);
+
+      // For flat walls, make two walls: one visible and flat, the other
+      // invisible and full size.
+      if (wallParams.flat) {
+        // wallParams.visible = false;
+        wallParams.height = 2;
+      }
 
       // Make a new wall, and give its mesh a pointer to parent
       let wall = new Wall(wallParams);
@@ -477,6 +477,13 @@ function render() {
   requestAnimationFrame(render);
 }
 
+function addGalaxyFloor() {
+  scene.add(floor.mesh);
+}
+
+function removeGalaxyFloor() {
+  scene.remove(floor.mesh);
+}
 
 /******************************************************************************/
 /**                      HELPERS                                             **/
@@ -702,6 +709,7 @@ function handleKeypress(event) {
   }
   else if (action.type == GODMODE) {
     player.canDie = false;
+    player.canMove = true;
   }
 }
 
