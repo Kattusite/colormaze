@@ -73,3 +73,17 @@
 .hidden {
   display: none;
 }
+
+
+.writeupLink {
+  border: 2px solid #333;
+  background-color: #aaa;
+  color: #ddd;
+  position: absolute;
+  bottom: 40px;
+  right: 40px;
+  padding: 10px;
+  font-size: x-large;
+  border-radius: 5px;
+  font-family: monospace;
+}
