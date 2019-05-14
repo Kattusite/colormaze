@@ -164,9 +164,17 @@ function initEntities() {
   // Add 4 intro shooters
   let shooter;
 
-  let makeShooters = function(coords) {
+  let makeShooters = function(coords, inactive) {
     for (let c of coords) {
+
       shooter = new Shooter(c[0], c[1], PLAYER_Z);
+
+      // If the shooters are inactive, disable them
+      if (inactive) {
+        shooter.deactivate();
+        inactiveShooters.push(shooter);
+      }
+
       scene.add(shooter.mesh);
       entities.push(shooter);
     }
@@ -187,12 +195,24 @@ function initEntities() {
       [2700, 500],
       [2700, 550],
     ],
+    "stage3": [
+      [1650, -1650],
+      [1650, -1750]
+    ],
+    "ambush": [
+      [2600, -1000],
+      [3100, -1000],
+      [2600, -1200],
+      [3100, -1200],
+      [2850, -1000]
+    ]
   }
 
   // Initialize shooters
   for (let stage in stages) {
+    let inactive = (stage === "ambush");
     let coords = stages[stage];
-    makeShooters(coords);
+    makeShooters(coords, inactive);
   }
 }
 
@@ -396,6 +416,11 @@ function initWalls() {
       wall.mesh.parentDef = wall;
 
       group.add(wall.mesh);
+
+      // If this is a special wall, save it.
+      if (wallParams.name) {
+        namedWalls[wallParams.name] = wall;
+      }
     }
 
     // Move the min/max points away from each other slightly as fudge factor to account for thickness
@@ -489,13 +514,7 @@ function render() {
   requestAnimationFrame(render);
 }
 
-function addGalaxyFloor() {
-  scene.add(floor.mesh);
-}
 
-function removeGalaxyFloor() {
-  scene.remove(floor.mesh);
-}
 
 /******************************************************************************/
 /**                      HELPERS                                             **/

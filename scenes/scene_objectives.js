@@ -81,6 +81,103 @@ var SCENE_OBJECTIVES = {
       color: 0xea5254,
     }
   },
+
+  "galaxy": {
+    position: new THREE.Vector3(1900, -1400, PLAYER_Z),
+    params: {
+      name: "galaxy",
+      color: 0x808080,
+      animate: function() {
+        let factor = 1 + 0.2 * Math.sin(time / 500);
+        this.mesh.scale.set(1,1,1).multiplyScalar(factor);
+      },
+      onUnlock: addGalaxyFloor,
+    }
+  },
+  "perspective": { //does nothing yet
+    position: new THREE.Vector3(2850, -1100, PLAYER_Z),
+    params: {
+      name: "dimensional",
+      color: 0x808080,
+      animate: function() {
+        let factor = 1 + 0.2 * Math.sin(time / 500);
+        this.mesh.scale.set(1,1,1).multiplyScalar(factor);
+      },
+      onUnlock: function() {
+        shiftCamera();
+
+        // Lock the exit
+        objectives.trapDisabled = false;
+        namedWalls["trap"].material.opacity = 1;
+
+        // activate the shooters
+        for (let s of inactiveShooters) {
+          s.activate();
+        }
+
+        showMessage("It's an ambush! Use your new powers to escape!", 1500);
+      }
+    },
+  },
+  "flatLight": { //does nothing yet
+    position: new THREE.Vector3(1550, -1700, PLAYER_Z),
+    params: {
+      name: "basic light",
+      color: 0x808080,
+      animate: function() {
+        let factor = 1 + 0.2 * Math.sin(time / 500);
+        this.mesh.scale.set(1,1,1).multiplyScalar(factor);
+      },
+      onUnlock: function() {
+        /*
+        let uuid = action.light.uuid;
+
+        // Do nothing if light already in scene
+        if (activeLights[uuid]) return;
+
+        scene.add(action.light);
+        activeLights[uuid] = action.light;
+
+        // Normalize lights to have intensity 1
+        normalizeLights();
+        */
+
+        // scene.add(pointWhite);
+      }
+    }
+  },
+  "playerLight": { //does nothing yet
+    position: new THREE.Vector3(1600, -2100, PLAYER_Z),
+    params: {
+      name: "radiant light",
+      color: 0x808080,
+      animate: function() {
+        let factor = 1 + 0.2 * Math.sin(time / 500);
+        this.mesh.scale.set(1,1,1).multiplyScalar(factor);
+      },
+      onUnlock: function() {
+        player.addLight();
+        for (let invWall of invisibleWalls) {
+          invWall.material.opacity = 0.35;
+        }
+      }
+    }
+  },
+  "coolParticles": {
+    position: new THREE.Vector3(3050, -2300, PLAYER_Z),
+    params: {
+      name: "jetpack",
+      color: 0x808080,
+      init: function(self) {
+        // let particles = new THREE.GPUParticleSystem({maxParticles: 20000});
+        // self.mesh.add(particles);
+      },
+      onUnlock: function() {
+        options.lifetime = 4;
+        player.speed *= 1.75;
+      }
+    }
+  },
   /*
 
   "pulse": {

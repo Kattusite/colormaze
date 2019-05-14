@@ -66,7 +66,13 @@ function Wall(params) {
     this.material = new THREE.MeshPhongMaterial({color: params.color})
   }
   else {
-    this.material = new THREE.ShadowMaterial();
+    // this.material = new THREE.ShadowMaterial();
+    this.material = new THREE.MeshPhongMaterial({color: params.color});
+    this.material.transparent = true;
+    this.material.opacity = 0;
+
+    // store a ref for later
+    invisibleWalls.push(this);
   }
 
   this.speed = params.speed;

@@ -29,6 +29,7 @@
 
   flat: if true a flat wall that you can pass over
   invisible: if true, ive wall a shadow material
+  name: if the wall is special, save a reference to it in namedWalls[name]
 */
 
 var SCENE_WALLS = {
@@ -339,17 +340,194 @@ var SCENE_WALLS = {
       nofloor: true,
     },
   ],
-  // special walls, doors, invis walls from stage2
-  /* "stage2 extra": [
+  "stage3" : [
     {
-      start: [1800, -200],
-      end:   [2000, -200],
-      color: 0x33cc33,
-      unlockedBy: "green",
+      start: [ 2000, -750],
+      end:   [ 2000, -1300],
+      color: 0xa442f4,
+    },
+    {
+      end:   [ 2500, -1300],
+      color: 0x7c3b1f,
+    },
+    {
+      end:   [ 2500, -900],
+    },
+    {
+      end:   [3200, -900],
+    },
+    {
+      end:   [3200, -1500],
+    },
+    {
+      end:   [2950, -1500],
+    },
+    {
+      // flat secret door - escape from ambush
+      end:   [2750, -1500],
+      flat: true,
+      unlockedBy: "perspective",
+      speed: 0.5,
+    },
+    {
+      end:   [2000, -1500],
+    },
+    {
+      end:   [2000, -1900],
+      color: 0xa442f4,
+    },
+    {
+      end:   [2750, -1900],
+    },
+    {
+      // flat secret door
+      end:   [2950, -1900],
+      flat: true,
+      unlockedBy: "perspective",
+      speed: 0.5,
+    },
+    {
+      end:   [2950, -2100],
+    },
+    {
+      end:   [1800, -2100],
+    },
+    {
+      end:   [1800, -1500],
+    },
+    {
+      end:   [1150, -1500],
+    },
+    {
+      end:   [1150, -1600],
+    },
+    {
+      end:   [1700, -1600],
+    },
+    {
+      end:   [1700, -1800],
+    },
+    {
+      end:   [1150, -1800],
+    },
+    {
+      end:   [1150, -2200],
+    },
+    {
+      end:   [1250, -2200],
+    },
+    {
+      // flat door to invis maze
+      end:   [1450, -2200],
+      flat: true,
+      unlockedBy: "perspective",
       speed: 0.1,
-    }
-  ] */
-  /* "stage3" : [
-
-  ] */
+    },
+    {
+      end:   [3150,-2200],
+    },
+    {
+      end:   [3150,-2400],
+    },
+    {
+      end:   [950, -2400],
+    },
+    {
+      end:   [950, -1300],
+    },
+    {
+      end:   [1800, -1300],
+    },
+    {
+      end:   [1800, -750],
+      cycle: true,
+    },
+    // end of standard walls
+    {
+      // The trap wall locking player in
+      start: [2500, -1500],
+      end:   [2500, -1300],
+      name: "trap",
+      visible: false,
+      color: 0x000000,
+      unlockedBy: "trapDisabled",
+      speed: 1,
+      nofloor: true,
+    },
+    {
+      // invisible left escape wall
+      start: [2750, -1500],
+      end:   [2750, -1900],
+      visible: false,
+      nofloor: true,
+    },
+    {
+      // invisible rt escape wall
+      start: [2950, -1500],
+      end:   [2950, -1900],
+      visible: false,
+      nofloor: true,
+    },
+    {
+      // flat locked south door
+      start: [2000, -1500],
+      end:   [1800, -1500],
+      flat: true,
+      unlockedBy: "perspective",
+      speed: 0.1,
+      nofloor: true,
+    },
+    {
+      // flat locked west door
+      start: [1800, -1300],
+      end:   [1800, -1500],
+      flat: true,
+      unlockedBy: "perspective",
+      speed: 0.1,
+      nofloor: true,
+    },
+    {
+      // invis wall to block projectiles
+      start: [1150, -1600],
+      end:   [1150, -1800],
+      visible: false,
+      speed: 0.5,
+      nofloor: true,
+    },
+    {
+      // invis maze top left
+      start: [1300, -1800],
+      end:   [1300, -1900],
+      visible: false,
+      nofloor: true,
+    },
+    {
+      // invis maze mid left
+      start: [1300, -2050],
+      end:   [1450, -2050],
+      visible: false,
+      nofloor: true,
+    },
+    {
+      // invis maze mid
+      start: [1450, -1950],
+      end:   [1450, -2200],
+      visible: false,
+      nofloor: true,
+    },
+    {
+      // invis maze mid rt
+      start: [1450, -1950],
+      end:   [1650, -1950],
+      visible: false,
+      nofloor: true,
+    },
+    {
+      // invis maze right  (block player from out of bounds)
+      start: [1800, -2100],
+      end: [1800, -2200],
+      visible: false,
+      nofloor: true,
+    },
+  ]
 };

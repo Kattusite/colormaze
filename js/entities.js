@@ -259,11 +259,24 @@ function Shooter(x, y, z) {
   this.prevShot = undefined;   // time in ms of last shot
   this.nextShot = time + this.firingDelay + this.randDelay;  // time in ms of next shot
 
+  this.inactive = false;
+
   this.target = undefined;
+}
+
+Shooter.prototype.deactivate = function() {
+  this.inactive = true;
+}
+
+Shooter.prototype.activate = function() {
+  this.inactive = false;
+  this.nextShot = time + (this.firingDelay + this.randDelay);
 }
 
 // Function to animate this shooter every frame
 Shooter.prototype.animate = function() {
+  if (this.inactive) return;
+
   this.mesh.rotation.x += 0.01;
 
   // If we have passed our time to shoot, fire a shot and update times

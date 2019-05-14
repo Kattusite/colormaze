@@ -54,6 +54,11 @@ const PLAYER_SIZE = 50;
 const PLAYER_Z = FLOOR_Z + PLAYER_SIZE / 2;  // For players, objectives, entities
 
 
+// Walls that are extra special and need to be referenced mid-game
+var namedWalls = {};
+var inactiveShooters = [];
+var invisibleWalls = [];
+
 /******************************************************************************/
 /**                               GAMEPLAY                                   **/
 /**                                                                          **/
@@ -75,12 +80,22 @@ var objectives = {
   bit2:           false,
   bit4:           false,
   bit8:           false,
+
   // Stretch goals
   sounds:         false,
   jump:           false,
+
+  //
+  galaxy:         false,
+  flatLight:      false,
+  playerLight:    false,
+
   // particle stuff
   coolParticles:  false,
-  lameParticles:  false
+  lameParticles:  false,
+
+  // used for trap sequence in stage 3
+  trapDisabled:   true,
 };
 
 
@@ -100,6 +115,14 @@ function shiftCamera() {
     camera = camera3d;
     controls.enabled = true;
   }
+}
+
+function addGalaxyFloor() {
+  scene.add(floor.mesh);
+}
+
+function removeGalaxyFloor() {
+  scene.remove(floor.mesh);
 }
 
 /******************************************************************************/
