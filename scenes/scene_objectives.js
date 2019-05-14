@@ -129,6 +129,9 @@ var SCENE_OBJECTIVES = {
         this.mesh.scale.set(1,1,1).multiplyScalar(factor);
       },
       onUnlock: function() {
+        // hacky but effective
+        scene.add(pointWhite);
+        ambientWhite.intensity = 0.8;
         /*
         let uuid = action.light.uuid;
 
