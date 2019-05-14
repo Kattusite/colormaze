@@ -278,7 +278,16 @@ Your browser does not support the video tag.
       automate the conversion of those json definition into three.js objects. In
       addition, some objects (such as the floor) proved to be incredibly tedious
       to define by hand, so we defined the floor as the area bounded by a continuous
-      chain of walls, allowing us to generate it automatically.</li><br>
+      chain of walls, allowing us to generate it automatically. In addition, we
+      used interpolation between wall segments to make "peg" walls at intersections
+      and corners. These segments' features, like color and height, would be interpolated
+      between the values of neighbors. In order to make our JSON wall definition
+      more concise, we also used extrapolation to procedurally generate colors
+      of wall segments. We manually defined colors for certain "keywalls", and
+      colors for the remaining walls were determined via a random walk - we used a
+      random walk between the colors of keywalls in HSL color-space to populate
+      the colors of the remaining walls.
+    </li><br>
     <li><u>Collision detection</u>: We had to find a way to compute collisions
       efficiently, as we would have to check (potentially) hundreds of walls and
       entities to see if the player and/or projectiles are colliding with them,
