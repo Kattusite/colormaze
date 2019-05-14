@@ -34,7 +34,7 @@
 </ul>
 <li><a href='#Discussion'>Discussion</a></li>
 <li><a href='#Conclusion'>Conclusion</a></li>
-<li><a href='#Acknowledgments'>Acknowledgments</a></li>
+<li><a href='#Sources'>Sources</a></li>
 </ul></div>
 
 <p><hr><p><a name='Introduction'></a><h1><big>Introduction</big></h1><p><hr><p>
@@ -235,41 +235,48 @@ and non-axis-aligned movement.
 
 
 <br><a name='Challenges'></a><h1>Challenges</h1>
-
-    <li><u>Collision detection</u>:
-    </li><br>
-    <li><u>Creating walls</u>: (dunno what to put here)</li><br>
-    <li><u>Variable color</u>: (dunno what to put here)</li><br>
-
+<ul>
+    <li><u>Wall generation</u>: Initially, making the game map involved manually coding each individual wall. We had to find a way to efficiently create walls, as specifying each wall would take an extremely long time given our desired map size. Our challenge was making walls customizable enough, as this would give us the creative freedom to create an enjoyable map. We ended up reading in walls with json, then using a set of helper functions to automate the conversion of those json definition into three.js objects. In addition, some objects (such as the floor) proved to be incredibly tedious to define by hand, so we defined the floor as the area bounded by a continuous chain of walls, allowing us to generate it automatically.</li><br>
+    <li><u>Collision detection</u>: We had to find a way to compute collisions efficiently, as we would have to check (potentially) hundreds of walls and entities to see if the player and/or projectiles are colliding with them, 60 times a second. To efficiently do this, we used a recursively hierarchical definition of the scene. Walls were grouped into groups based on proximity to each other, and bounding boxes were calculated for groups of walls rather than individual ones. (This hierarchical grouping was done in the wall-generation code mentioned above). When checking for intersections, we checked groups of walls to see if the bounding box of the entire group intersected with the player's character -- if not, there definitely wouldn't be any walls in the group that could collide with the player, and the entire group could safely be ignored.<br>
+    <br>Another challenge that we had was making sure that we did not ignore collisions (e.g. if a player intersected with two walls at once, and one was passable and the other was not, the player should be stopped from moving through the second wall). To get around this, rather than stopping once a collision was found, we checked the entire group of walls for collisions until we found an impassable wall, after which the player's speed was set to 0.</li><br>
+    <li><u>Variable color</u>: It was extremely difficult to get the equations for color corect, as we wanted to have a high degree of artistic control over how the underlying colors in our scene were displayed to the player. We implemented the black and white to grayscale to RGB (ordered as GBR in our game) transition by filtering out the channels of color that had not yet been unlocked. For example, if red was not unlocked, each color would be run through a bitwise <code>AND</code> operation with <code>0x00FFFF</code>. However, this looked messy, as colors would frequently get filtered down to black. This problem was especially pronounced when we applied color downscaling (8-bit to 4/2/1-bit) as filtering out locked channels would result in colors getting "downsampled" twice, making it more likely to lose defining color properties (i.e. turning into <code>0x000000</code>).<br>
+    <br>To solve this, we downscaled already-dark colors using their lightness values instead of their RGB values. We also created an exemption for grayscale shades (colors with low saturation values ignore RGB filtering), and we decided to allow larger-than-ordinary color depth (a minimum of 4-bit color) for grayscale operations in order to ensure that we did not end up with a boring scene with only-black walls. This was mostly done to give us more artistic control.</li>
+</ul>
 <br><p><hr><p><a name='Results'></a><h1><Big>Results</Big></h1><p><hr><p>
 
 <a name='MeasuringSuccess'></a><h1>Measuring Success</h1>
-
-- Our own visual tests <br>
-- Our own playthrough tests<br>
-- Feedback from test users<br>
-    <!-- This bit below is just notes to be added somewhere later-->
-    Many users felt confused at first, and so we decided to add a GUI
-    providing helpful pop-up messages about the world.
-
-<br><a name='Outcomes'></a><h1>Outcomes</h1>
+We measured our success by first playtesting our own game, then verifying that what we as game creators saw as an acceptable product was sufficient for a wider audience. We wanted to ensure that our game was both entertaining and visually pleasing enough to appeal to people that would not have seen the work that had gone into the project. In order to do this, we shared our game with other students that we knew through classes, extracurriculars, etc., to see if they enjoyed playing the game. In general, we received a positive reception -- players liked the clean graphics of the game and enjoyed the novelty of having to unlock the game's graphical features. Players that we did not explain the game objective to were initially underwhelmed at the 2D grayscale world that we introduced, but seemed to warm up to the game when they realized that there was more to the project.<br>
+<br>One piece of feedback that we received was that the game was a bit too difficult, and that it was nearly impossible to avoid getting hit by enemy projectiles. However, we felt that this was a relatively minor issue because we had disabled game loss, and because decreasing health would highlight the visual changes that come with being damaged.<br>
+<br>All in all, our results through playtesting and sharing our game with our peers indicated that our project was a success.
 
 <br><p><hr><p><a name='Discussion'></a><h1><Big>Discussion</Big></h1><p><hr><p>
+The approaches that we took were promising, and proved to be the correct ones.
+<ul>
+    <li>The approach that we took toward user experience resulted in a game that players enjoyed progressing through. We didn't think that any change was necessary (or desirable), as linear progression through game visual features was the main point behind our project. Subsequent work wouldn't include a change in the flow of the game, but rather the addition of game features (such as more realistic lighting, different shapes, jumping, etc.).</li><br>
+    <li>Our approach to high-level design also proved to be the correct one. Placing the game's unlockable graphics above other gameplay features (such as a HUD, a more detailed start/end screen, or a checklist of unlocked features) allowed us to focus on the part of the game that users would see and enjoy the most -- given additional time, we could implement these features, and flesh out the project so that it felt more like a polished game. However, given our deadline, we saw improving graphics as the most effective use of our time.</li><br>
+    <li>Using JavaScript and the three.js library turned out to be a good approach to building our game. The experience that we gained using three.js proved to be extremely valuable, and the myriad of publicly-available projects and resources provided us with both ideas and ways to implement them. Some follow-up work that could be done with respect to our low-level approach is cleaning up our code to make future maintenance and updates easier -- we rushed through this project, and this is sometimes apparent when looking at the guts of our game. Refactoring our code before anything else is added would help us improve on our game in the future.</li>
+</ul>
+In general, the approaches that we took to designing and building our game turned out to be effective ones. We learned to maximize our product's quality by using the bulk of our time to polish what users would see as the 'point' of the game. We also gained some valuable experience in designing basic games, writing in JavaScript and utilizing three.js, and splitting goals.
 
 <br><p><hr><p><a name='Conclusion'></a><h1><Big>Conclusion</Big></h1><p><hr><p>
+We found this project extremely enjoyable to complete. Although we would have liked more time to create an even better finished product, we are satisfied with the game that we have managed to produce by the Dean's Date deadline. In addition, because creating games was new to most of us, Color Maze proved to be a novel experience. While there are some things that we could have done differently, such as spending less time on features that ended up not working out in the end or meeting more often to discuss project checkpoints, as a whole, the approach that we took to creating Color Maze proved to be highly effective. This final COS426 project proved to be a valuable experience in coding, collaboration, and prioritizing achievable goals.
 
-<br><p><hr><p><a name='Acknowledgments'></a><h1><Big>Acknowledgments</Big></h1><p><hr><p>
+<br><p><hr><p><a name='Sources'></a><h1><Big>Sources</Big></h1><p><hr><p>
   We would like to acknowledge the following sources for their contributions to
   our final product:
-    - cite the starfield image
-    - cite the background music
-    - cite the pew pew sounds
+  <ul>
+    <li>cite the starfield image</li>
+    <li>cite the background music</li>
+    <li>cite the pew pew sounds</li>
+  </ul>
   Libraries used:
-    - three.js
-    - three.js GPUParticleSystem plugin
-    - jQuery
-    - jQuery UI plugin
-
+  <ul>
+    <li><a href="https://threejs.org">three.js</a>, without whose incredible framework and documentation we never would have finished.
+    <li><a href="https://github.com/mrdoob/three.js/blob/master/examples/js/controls/OrbitControls.js">three.js OrbitControls.js plugin</a></li>
+    <li><a href="https://github.com/mrdoob/three.js/blob/master/examples/webgl_gpu_particle_system.html">three.js GPUParticleSystem.js plugin</a></li>
+    <li><a href="https://jquery.com">jQuery</a></li>
+    <li><a href="https://jqueryui.com">jQuery UI plugin</a></li>
+  </ul>
 
 </div>
 </div>
