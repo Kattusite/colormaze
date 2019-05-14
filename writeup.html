@@ -268,8 +268,8 @@ Your browser does not support the video tag.
     <li><u>Collision detection</u>: We had to find a way to compute collisions
       efficiently, as we would have to check (potentially) hundreds of walls and
       entities to see if the player and/or projectiles are colliding with them,
-      60 times a second. To efficiently do this, we used a recursively hierarchical
-      definition of the scene. Walls were grouped into groups based on proximity
+      60 times a second. To efficiently do this, we used a recursive, hierarchical
+      definition of the scene. Walls were combined into groups based on proximity
       to each other, and bounding boxes were calculated for groups of walls rather
       than individual ones. (This hierarchical grouping was done in the wall-generation
       code mentioned above). When checking for intersections, we checked groups
