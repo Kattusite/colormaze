@@ -400,7 +400,7 @@ function initWalls() {
     // Build the floor
     let floorDef = {};
     floorDef.geometry = new THREE.ShapeGeometry(floor);
-    floorDef.material = new THREE.MeshLambertMaterial({color: 0x6c7f7f});
+    floorDef.material = new THREE.MeshPhongMaterial({color: 0x6c7f7f});
     floorDef.material.showTrueColor = true;
     floorDef.mesh     = new THREE.Mesh(floorDef.geometry, floorDef.material);
     floorDef.type = "Floor";
