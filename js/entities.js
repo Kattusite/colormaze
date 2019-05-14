@@ -25,6 +25,7 @@ function getHitbox() {
 // Sorry in advance. This function is a mess
 function intersectsWall() {
   let hitbox = this.getHitbox();
+  let isPlayer = (this.health !== undefined); // hacky but effective
 
   // Check whether this intersects an entire wall group (or possibly a single wall)
   // Return an array such that:
@@ -42,7 +43,11 @@ function intersectsWall() {
           if (objectives[group.unlockedBy]) return [true, group.speed];
           // Otherwise, door is locked, do not allow through at all
           else {
-            showMessage(`The door is locked... You'll need to find a ${group.unlockedBy} relic to pass.`);
+            // if no message currently displayed, display one
+            // if this is not a player do not display anything
+            if (!isMessageVisible() && isPlayer) {
+              showMessage(`The door is locked... You'll need to find a ${group.unlockedBy} relic to pass.`, 2500);
+            }
             return [true, 0];
           }
         }
@@ -367,7 +372,7 @@ Projectile.prototype.animate = function() {
     // console.log("hit player");
     player.hitFor(this.damage);
     this.dead = true;
-    soundHit.play();
+    if (objectives.sounds) soundHit.play();
   }
 
   // If projectile hits a wall, kill it

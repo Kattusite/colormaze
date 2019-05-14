@@ -14,7 +14,7 @@ var SCENE_OBJECTIVES = {
       },
     }
   },
-  "sound": { //does nothing yet
+  "sounds": { //does nothing yet
     position: new THREE.Vector3(750, 550, PLAYER_Z),
     params: {
       name: "sound",
@@ -107,7 +107,7 @@ var SCENE_OBJECTIVES = {
         shiftCamera();
 
         // Lock the exit
-        objectives.trapDisabled = false;
+        objectives["disable traps"]= false;
         namedWalls["trap"].material.opacity = 1;
 
         // activate the shooters
@@ -177,6 +177,12 @@ var SCENE_OBJECTIVES = {
         player.speed *= 1.75;
       }
     }
+  },
+  "bit8": {
+    position: new THREE.Vector3(1300, 1200, PLAYER_Z),
+    params: {
+      color: 0xdddddd,
+    },
   },
   /*
 

@@ -1,5 +1,9 @@
 // File for dealing with onscreen messages
 
+function isMessageVisible() {
+  return $(".msg.center").css("opacity") != 0;
+}
+
 function showMessage(str, duration, callback) {
   if (!duration) duration = 3000;
   let targetOpacity = 0.75;
@@ -30,7 +34,7 @@ function showMessage(str, duration, callback) {
 
   $msg.animate(
     {
-      "opacity": targetOpacity
+      "opacity": targetOpacity - 0.01
     },
     fadeTime,
     keepDisplaying

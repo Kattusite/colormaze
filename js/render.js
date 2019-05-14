@@ -542,8 +542,9 @@ function toggleColor(color) {
 }
 
 
-// Given r,g,b in 0,255 return new color that is dithered to depth bits
+// Given r,g,b in 0,255 return new color that is sampled to depth bits
 // If isFloat is true, treat inputs as [0,1] instead of 0,255
+// "dither" is a misnomer; "quantize" or "downsample" is more accurate.
 let ditherRGB = function(r,g,b,depth, isFloat) {
   if (isFloat) {
     r *= 255;

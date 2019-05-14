@@ -95,7 +95,7 @@ var objectives = {
   lameParticles:  false,
 
   // used for trap sequence in stage 3
-  trapDisabled:   true,
+  "disable traps":   true,
 };
 
 

@@ -1,6 +1,9 @@
+<!DOCTYPE html>
+<html>
 <head>
     <title> COS426 Final Project &mdash; Color Maze: Writeup</title>
     <link href="css/writeup.css" type="text/css" rel="stylesheet"/>
+    <meta charset="UTF-8">
 </head>
 
 <body>
@@ -31,28 +34,77 @@
 </ul>
 <li><a href='#Discussion'>Discussion</a></li>
 <li><a href='#Conclusion'>Conclusion</a></li>
+<li><a href='#Acknowledgments'>Acknowledgments</a></li>
 </ul></div>
 
 <p><hr><p><a name='Introduction'></a><h1><big>Introduction</big></h1><p><hr><p>
 
 <a name='Goal'></a><h1>Goal</h1>
-Inspired by some of the work we have been doing towards the latter half of this course, as well as the role-playing action-adventure games of Inspired by some of the work we have been doing towards the latter half of this course, as well as the role-playing action-adventure games of our past, we decided to design the initial levels of a game. We also wanted the game to emulate (to a certain extent) the process of creating a video game – from a basic 2D design, to the initial colorization, to the addition of a third dimension. This formed our desire to create a ‘meta’ role-playing game of sorts, where the user’s objectives are to essentially better their experience of the game itself. With each ‘objective’ completed, an element of the game improves, thereby mimicking a part of the game development process.<br><br>
+Inspired by some of the work we have been doing towards the latter half of this
+course, as well as the role-playing action-adventure games of our past, we decided
+to design the initial levels of a game. We also wanted the game to emulate (to a
+ certain extent) the process of creating a video game – from a basic 2D design,
+ to the initial colorization, to the addition of a third dimension. This formed
+ our desire to create a ‘meta’ role-playing game of sorts, where the user’s objectives
+ are to essentially better their experience of the game itself. With each ‘objective’
+ completed, an element of the game improves, thereby mimicking a part of the game
+ development process.
+ <br><br>
 
-As with most video games, Color Maze is beneficial for any user looking to find a way to relax and have a fun, enjoyable experience. In addition, we created it with the hopes that the user also learns a little bit more about the bottom-up game design and development process. Ideally, with each improvement the user unlocks, they feel a similar level of satisfaction to how we felt adding each feature ourselves!<br><br>
+As with most video games, Color Maze is beneficial for any user looking to find
+a way to relax and have a fun, enjoyable experience. In addition, we created it
+with the hopes that the user also learns a little bit more about the bottom-up
+game design and development process, and gets to peek under the hood of how games
+like this are built. Ideally, with each improvement the user unlocks, they feel
+the same satisfaction as we felt adding each feature ourselves!<br><br>
 
 
 <br><a name='PreviousWork'></a><h1>Previous Work</h1>
-This project is inspired by a lot of the first-generation games that we have been exposed to, from the user experience of the 2D Mario games, to the level design of Pacman. We realized that the best of these games made efficient use of a minimalistic design, with a simple set-up and clear objectives, whereas some of our less-preferred games had a user experience that was bogged down by unnecessary features and overcomplicated plots.<br><br>
+This project is inspired by a lot of the first-generation games that we have been
+exposed to, from the user experience of the 2D Mario games, to the level design of Pacman.
+ We realized that the best of these games made efficient use of a minimalistic design,
+with a simple set-up and clear objectives, whereas some of our less-preferred games
+had a user experience that was bogged down by unnecessary features and overcomplicated plots.<br><br>
 
-The main inspiration for the gradual improvement of game feature elements in Color Maze came from the 2013 game Evoland. In Evoland, players begin their journey in a soundless, colorless, pixelated world. As they progress through the game, they encounter various treasure chests that provide them with features that one would normally take for granted, such as camera scrolling, color, background music, and non-axis-aligned movement. 
+The main inspiration for the gradual improvement of game feature elements in
+ Color Maze came from the 2013 game Evoland. In Evoland, players begin their journey
+in a soundless, colorless, pixelated world. As they progress through the game,
+they encounter various treasure chests that provide them with features that one
+would normally take for granted, such as camera scrolling, color, background music,
+and non-axis-aligned movement.
+<br><br>
 
-
-
-<br><br><a name='Approach'></a><h1>Approach</h1>
+<a name='Approach'></a><h1>Approach</h1>
 <ul>
-    <li><u>User experience</u>: We chose to implement a similar track of feature unlocks to what can be found in Evoland. Because of Color Maze’s slow-paced gameplay and (what we believe are) crisp visuals, we felt that a linear progression through an increasingly aesthetically-pleasing game would be the most satisfying way for users to play. Not only would they feel the accomplishment that comes with taking the time to complete game objectives, they would also appreciate the resulting improvement in game quality.</li><br>
-    <li><u>High-level game design</u>: We decided to make virtually all of the game objectives reward the player with cosmetic unlocks. Besides non-cosmetic unlocks that would perform very basic functions (such as giving the player access to a new area or revealing a previously unseen door), more complex game features would unnecessarily clutter the user’s game and detract from the visual experience that we hoped to create. Because of this, we decided to start with the very basics of a game – a keyboard-controlled character and basic collisions – and spend the rest our time adding in various graphical elements. We felt that this would be the most efficient way to build our project, as these features would be used to both improve the quality of the user’s game and extend the “plot” with an additional objective.</li><br>
-    <li><u>Low-level game design</u>:We wrote the game in JavaScript and used the three.js library because of the comprehensive documentation available online and the extensive amount of time that we have spent using three.js over the course of this semester. Although we initially considered using PixiJS for the 2D portion of our game, that idea was scrapped once we learned that three.js was sufficient for both 2D and 3D graphics.</li><br>
+    <li><u>User experience</u>: We chose to implement a similar track of feature
+      unlocks to what can be found in Evoland. Because of Color Maze’s slow-paced
+      gameplay and (what we believe to be) crisp visuals, we felt that a linear
+      progression through an increasingly aesthetically-pleasing game would be
+      the most satisfying way for users to play. Not only would they feel the
+      accomplishment that comes with taking the time to complete game objectives,
+      they would also appreciate the resulting improvement in game quality.</li><br>
+    <li><u>High-level game design</u>: We decided to make virtually all of the game
+       objectives reward the player with cosmetic unlocks. Besides non-cosmetic
+       unlocks that would perform very basic functions (such as giving the player
+      access to a new area or revealing a previously unseen door), more complex
+      game features would unnecessarily clutter the user’s game and detract from
+      the visual experience that we hoped to create. Because of this, we decided
+       to start with the very basics of a game – a keyboard-controlled character
+      and basic collisions – and spend the rest our time adding in various graphical
+      elements. We felt that this would be the most efficient way to build our project,
+      as these features would be used to both improve the quality of the user’s game
+      and extend the “plot” with an additional objective.</li><br>
+    <li><u>Low-level game design</u>: We wrote the game in JavaScript and used
+      the three.js library because of the comprehensive documentation available
+      online and the extensive amount of time that we have spent using three.js
+      over the course of this semester. Although we initially considered using
+      PixiJS for the 2D portion of our game, that idea was scrapped once we
+      learned that three.js was sufficient for both 2D and 3D graphics. Using
+      PixiJS would have also significantly complicated our plans to transition
+      from a 2D to a 3D game-world.<br>
+      Our user interface, including the messages that appear onscreen, were
+      created using basic HTML and JSS, and animated with the help of the jQuery
+      and jQuery UI libraries.</li><br>
 </ul>
 
 
@@ -60,20 +112,132 @@ The main inspiration for the gradual improvement of game feature elements in Col
 
 <a name='ImplementationChosen'></a><h1>Implemented Features</h1>
 <ul>
-    <li><u>Controllable Character</u>: We began by implementing a keyboard-controllable character. Although we could have opted to use other inputs, such as a mouse/trackpad, we felt that a keyboard was the best option for several reasons. Keyboard-controlled movement is the norm for virtually all computer games, making it more intuitive for most players; mapping keyboard inputs to movement is easier than mapping mouse movements; there was the possibility that we would use the mouse for another game function, such as rotating the camera.</li><br>
-    <li><u>Camera</u>: One of the game features that the player unlocks is a 3D world. Although there weren’t any options for rendering a 3D game without using three.js’s built-in 3D perspective camera, there were a couple of ways we could have chosen to implement the transition between a 2D and a 3D world. The first implementation that we discussed was maintaining two cameras, an orthographic camera and a perspective camera. Transitioning between 2D and 3D could be done by replacing the camera parameter provided to the renderer. This implementation was extremely easy to code but had the drawback of a somewhat jarring transition. An alternative implementation would have used just one 3D camera, with the transition between 2D and 3D being represented by the addition of depth in the objects present in the originally-two-dimensional scene. This implementation would have been exceedingly difficult, and we decided to take the first approach.</li><br>
-    <li><u>Physics</u>: (collisions, walls projectiles, doors) </li><br>
-    <li><u>Color</u>: (2-bit, 4-bit, 8-bit, RGB) </li><br>
-    <li><u>Player Health</u>: Various features were tied to the character’s health, such as a simulated heartbeat, the character’s color, the character-centered light, and the particle trail. As the player takes damage from enemy projectiles, the heartbeat becomes more rapid, the character’s color darkens, the light reddens, and the particle trail becomes shorter. Although these features could have been added as static features, we felt that tying them to the health of the player’s character would provide for more dynamic gameplay. As these were wholly cosmetic features, we did not consider alternative implementations, as our initial implementations were sufficient. The heartbeat was implemented by using the time as a parameter to a sine function; the color change of the character and the light was implemented by interpolating between a “healthy” state and a “dead” state using the fraction of the player’s remaining health; the particle trail was shortened by decreasing the lifespan of the particles in the trail.</li><br>
-    <li><u>Particles</u>: A high-quality particle trail was added to the game using the GPUParticleSystem plugin given as an example on the three.js website. This plugin allowed for the efficient rendering of thousands of realistic particles and provided easily-modifiable options for particle generation, making it an implementation with essentially no disadvantage besides looking slightly out-of-place in our rectangular axis-aligned world. We considered writing a simpler particle system as a precursor to the advanced one provided online. This would have given the player an intermediate step between having no particles and having extremely detailed ones. However, this proved to be too difficult to fit within our timeline, and a simpler particle system remains on our list of features to implement in the future. </li><br>
-    <li><u>Sounds</u>: (pew pew)</li>
+    <li><u>Controllable Character</u>: We began by implementing a keyboard-controllable
+       character. Although we could have opted to use other inputs, such as a mouse/trackpad,
+        we felt that a keyboard was the best option for several reasons.
+        Keyboard-controlled movement is the norm for virtually all computer games,
+        especially RPGs, making it the most intuitive option for most players.
+        Mapping keyboard inputs to movement is also easier than mapping mouse movements, and
+        leaving the mouse free opened up the possibility that we could use the
+        mouse for another game function, such as rotating the camera.</li><br>
+    <li><u>Camera</u>: One of the game features that the player unlocks is a 3D
+      world. Although there weren’t any options for rendering a 3D game without
+      using three.js’s built-in 3D perspective camera, there were a couple of
+      ways we could have chosen to implement the transition between a 2D and a
+      3D world. The first implementation that we discussed was maintaining two
+      cameras, an orthographic camera and a perspective camera. Transitioning
+      between 2D and 3D could be done by replacing the camera parameter provided
+      to the renderer. This implementation was extremely easy to code but had the
+      drawback of a somewhat jarring transition. An alternative implementation
+      would have used just one 3D camera, with the transition between 2D and 3D
+      being represented by the addition of depth in the objects present in the
+      originally-two-dimensional scene. This implementation would have been
+      significantly more difficult, and we decided to take the first approach.</li><br>
+    <li><u>Physics</u>: (collisions, walls projectiles, doors)
+      Although we were not aiming for total physical realism in our game, we did
+      want to make sure that the basic laws of physics applied in the expected
+      ways, so that players had realistic and intuitive interactions with the game
+      world.<br>
+      First and foremost, we wanted to make sure the player never ended
+      up clipping through walls, and so we implemented a hierarchical scene
+      intersection algorithm using the bounding boxes of the players and walls.
+      Our implementation groups nearby walls into "wall groups", and then
+      attempts to intersect collision-sensitive entities (like the player and
+      projectiles) with the entire group of walls at once. If no intersection is
+      found, we can skip the entire group of walls, saving lots of computation.
+      If an intersection is found, we'll have to recursively check the members
+      of that wall-group to figure out the specific wall or subgroup intersected.
+      An alternative, naive implementation would be to iterate over every single
+      wall in the scene for every single entity. We opted for the optimized
+      approach because it would in principle allow us to implement very large
+      maps with many many walls, while keeping performance high. With clever
+      wall-grouping, we can get the theoretical number of collision checks to be
+      logarithmic in the total number of walls, as opposed to linear in the
+      naive case.<br>
+      Secondly, we wanted to make projectiles fired at the player seem realistic
+      and follow realistic trajectories. This was implemented using very basic
+      simulations of the equations of motion; at each time step the position of
+      the projectile was incremented by its velocity. We had considered adding
+      more physically realistic effects, like gradual slow-down over time to
+      simulate drag, or firing shots in a 3d arc towards the player, affected by
+      gravity, but ultimately decided against these, as they would needlessly
+      complicate both the implementation and user experience. <br>
+      Finally, we decided to extend the basic collision framework we had defined
+      for simple walls in two major ways. First, we made some walls act as locked
+      doors, that would block passage until the correct items were collected.
+      This was implemented by assigning certain doors to boolean objective variables,
+      and incorporating checks to this variable into the wall collision code.
+      Second, we made some walls simulate difficult terrain by causing them to
+      slow the player down while inside them, rather than prevent the player
+      from moving through them at all. Ordinarily 100% of a player's attempted
+      movement into a wall would be blocked, but we realized that by reducing
+      or increasing this percentage, we could make regions which the player passed
+      through more quickly or slowly. We considered introducing an animation of sorts,
+      such as rotating walls out of the way to "open" them, but decided this would
+      be trickier to implement and would compromise our crisp visual aesthetic.
+    </li><br>
+    <li><u>Color</u>: (2-bit, 4-bit, 8-bit, RGB filtering)
+      A key feature of our game is the gradual progression from black and white
+      graphics up to full color by the end of the game. This progression takes
+      place in several stages, with the player first unlocking grayscale, and
+      then proceeding to unlock the red, green, and blue color channels, and 2-,
+      4-, and 8-bit color depth. We decided to implement this by assigning
+      a true color for each material in our scene, and then running each of these
+      colors through a filter before it was rendered for each frame. The filter
+      first filters out the desired R,G,B channels of any high-saturation material
+      colors that appear in the scene. Then, the resulting color is quantized
+      by rounding it to the closest color representable with only a desired bit depth.
+      Finally, for colors that were filtered all the way down to black, we fall
+      back on using the lightness of the color to construct a shade of gray that
+      is also quantized to the desired depth.
+      There were numerous different ways to implement this system, and our final
+      implementation went through three major revisions before it got to a point that
+      we were satisfied with the aesthetic quality of the scene. We experimented
+      with interleaving the quantization and filtering steps for different channels,
+      and with an iterative process that gradually reduced color depth, but ultimately
+      settled on the current implementation for the clear sense of aesthetic progression it enabled.
+    </li><br>
+    <li><u>Player Health</u>: Various features were tied to the character’s health,
+      such as a simulated heartbeat, the character’s color, the character-centered
+      light, and the particle trail. As the player takes damage from enemy projectiles,
+      the heartbeat becomes more rapid, the character’s color darkens, the light
+      reddens, and the particle trail becomes shorter. Although these features
+      could have been added as static features, we felt that tying them to the
+      health of the player’s character would provide for more dynamic gameplay,
+      and make the player more immersed and invested in the fate of the cube.
+      As these were wholly cosmetic features, we did not consider alternative
+      implementations, as our initial implementations were sufficient. The heartbeat
+      was implemented by using the time as a parameter to a sine function; the
+      color change of the character and the light was implemented by interpolating
+      between a “healthy” state and a “dead” state using the fraction of the
+      player’s remaining health; the particle trail was shortened by decreasing
+      the lifespan of the particles in the trail.</li><br>
+    <li><u>Particles</u>: A high-quality particle trail was added to the game
+      using the GPUParticleSystem plugin given as an example on the three.js website.
+      This plugin allowed for the efficient rendering of thousands of realistic
+      particles and provided easily-modifiable options for particle generation,
+      making it an implementation with essentially no disadvantage besides looking
+      slightly out-of-place in our rectangular axis-aligned world. We considered
+      writing a simpler particle system as a precursor to the advanced one provided
+      online. This would have given the player an intermediate step between having
+      no particles and having extremely detailed ones. However, this proved to be too
+      difficult to fit within our timeline, and a simpler particle system remains
+      on our list of features to implement in the future. </li><br>
+    <li><u>Sounds (pew pew)</u>: We wanted the game to start out silent
+      initially, and then add in sounds as a progression step when the user
+      collected the right items. We handled all of our audio needs using the built-in
+      three.js Audio and AudioListener objects
+
+    </li>
+
 </ul>
 
 
 
 <br><a name='Challenges'></a><h1>Challenges</h1>
 
-    <li><u>Collision detection</u>: (dunno what to put here)</li><br>
+    <li><u>Collision detection</u>:
+    </li><br>
     <li><u>Creating walls</u>: (dunno what to put here)</li><br>
     <li><u>Variable color</u>: (dunno what to put here)</li><br>
 
@@ -84,6 +248,9 @@ The main inspiration for the gradual improvement of game feature elements in Col
 - Our own visual tests <br>
 - Our own playthrough tests<br>
 - Feedback from test users<br>
+    <!-- This bit below is just notes to be added somewhere later-->
+    Many users felt confused at first, and so we decided to add a GUI
+    providing helpful pop-up messages about the world.
 
 <br><a name='Outcomes'></a><h1>Outcomes</h1>
 
@@ -91,6 +258,17 @@ The main inspiration for the gradual improvement of game feature elements in Col
 
 <br><p><hr><p><a name='Conclusion'></a><h1><Big>Conclusion</Big></h1><p><hr><p>
 
+<br><p><hr><p><a name='Acknowledgments'></a><h1><Big>Acknowledgments</Big></h1><p><hr><p>
+  We would like to acknowledge the following sources for their contributions to
+  our final product:
+    - cite the starfield image
+    - cite the background music
+    - cite the pew pew sounds
+  Libraries used:
+    - three.js
+    - three.js GPUParticleSystem plugin
+    - jQuery
+    - jQuery UI plugin
 
 
 </div>

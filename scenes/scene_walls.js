@@ -450,7 +450,7 @@ var SCENE_WALLS = {
       name: "trap",
       visible: false,
       color: 0x000000,
-      unlockedBy: "trapDisabled",
+      unlockedBy: "disable traps",
       speed: 1,
       nofloor: true,
     },
