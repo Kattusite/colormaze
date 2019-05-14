@@ -122,7 +122,7 @@ function Player() {
   this.mesh = new THREE.Mesh(this.geometry, this.material);
   this.mesh.position.add(new THREE.Vector3(0,0,PLAYER_Z));
   var light = new THREE.PointLight(0x00ff00, 1, 500);
-  light.position.add(new THREE.Vector3(0, 0, 0));
+  light.position.add(new THREE.Vector3(0, 0, 30));
 
   this.mesh.add(light);
 
