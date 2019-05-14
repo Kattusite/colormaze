@@ -63,7 +63,7 @@ function Wall(params) {
 
   // Create the material
   if (params.visible) {
-    this.material = new THREE.MeshLambertMaterial({color: params.color})
+    this.material = new THREE.MeshPhongMaterial({color: params.color})
   }
   else {
     this.material = new THREE.ShadowMaterial();

@@ -99,7 +99,7 @@ function initRenderer() {
   floor = {};
   let inf = 100000;
   floor.geometry = new THREE.PlaneGeometry(inf, inf);
-  floor.material = new THREE.MeshLambertMaterial(0x443344);
+  floor.material = new THREE.MeshPhongMaterial(0x443344);
   let texture = new THREE.TextureLoader().load( "textures/granite.jpg" );
   texture.wrapS = THREE.RepeatWrapping;
   texture.wrapT = THREE.RepeatWrapping;
@@ -129,7 +129,7 @@ function initRenderer() {
 
   // The testing "floor" square in the center -- does nothing so far
   let geometry1 = new THREE.PlaneGeometry(300, 300, 1, 1);
-  let material1 = new THREE.MeshLambertMaterial({color: 0x447777});
+  let material1 = new THREE.MeshPhongMaterial({color: 0x447777});
   let mesh1 = new THREE.Mesh(geometry1, material1);
   mesh1.position.set(0,0,-1100);
   // scene.add(mesh1);

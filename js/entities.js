@@ -3,6 +3,8 @@ const deadColor = new THREE.Color(0x8c3a3a);
 const aliveColor = new THREE.Color(0x22ff88);
 const enemyColor = new THREE.Color(0xbb4444);
 const white = new THREE.Color(0xffffff);
+const green = new THREE.Color(0x00ff00);
+const red = new THREE.Color(0xff0000);
 
 /******************************************************************************/
 /**                      Entities                                            **/
@@ -119,6 +121,10 @@ function Player() {
   this.material = new THREE.MeshLambertMaterial({color: this.origColor});
   this.mesh = new THREE.Mesh(this.geometry, this.material);
   this.mesh.position.add(new THREE.Vector3(0,0,PLAYER_Z));
+  var light = new THREE.PointLight(0x00ff00, 1, 500);
+  light.position.add(new THREE.Vector3(0, 0, 0));
+
+  this.mesh.add(light);
 
   this.position = this.mesh.position;
   this.canMove = false;
@@ -200,6 +206,9 @@ Player.prototype.hitFor = function(dmg) {
   this.material.color.copy(newColor);
   this.material.trueColor.copy(newColor);
 
+  let lightColor = green.lerp(red, healthPercent);
+  this.mesh.children[0].color = lightColor;
+
 
   options.color = aliveColor.lerp(deadColor, healthPercent);
   options.lifetime *= 0.7
@@ -266,7 +275,6 @@ Shooter.prototype.animate = function() {
     this.material.trueColor = currentColor;
   }
 
-
   this.position = this.mesh.position;
 }
 
@@ -318,7 +326,7 @@ function Projectile(position, velocity) {
   this.speed = 12;                                 // speed to scale velocity by
   this.velocity.multiplyScalar(this.speed);       // actual velocity vector
 
-  this.damage = 20; // how much damage is inflicted on hit
+  this.damage = 10; // how much damage is inflicted on hit
 
   // Define travel time and despawn time
   this.spawnTime = time;
