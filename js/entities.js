@@ -346,6 +346,7 @@ Projectile.prototype.animate = function() {
     // console.log("hit player");
     player.hitFor(this.damage);
     this.dead = true;
+    soundHit.play();
   }
 
   // If projectile hits a wall, kill it
