@@ -1,6 +1,8 @@
 
-const ded = new THREE.Color(0x8c3a3a);
-const alv = new THREE.Color(0x22ff88);
+const deadColor = new THREE.Color(0x8c3a3a);
+const aliveColor = new THREE.Color(0x22ff88);
+const enemyColor = new THREE.Color(0xbb4444);
+const white = new THREE.Color(0xffffff);
 
 /******************************************************************************/
 /**                      Entities                                            **/
@@ -199,7 +201,7 @@ Player.prototype.hitFor = function(dmg) {
   this.material.trueColor.copy(newColor);
 
 
-  options.color = alv.lerp(ded, healthPercent);
+  options.color = aliveColor.lerp(deadColor, healthPercent);
   options.lifetime *= 0.7
   options.color.multiplyScalar(0.7);
 
@@ -229,7 +231,7 @@ Player.prototype.isDead = function() {
 
 function Shooter(x, y, z) {
   this.geometry = new THREE.TetrahedronGeometry(25);
-  this.material = new THREE.MeshLambertMaterial({color: 0xbb4444});
+  this.material = new THREE.MeshLambertMaterial({color: enemyColor});
   this.mesh     = new THREE.Mesh(this.geometry, this.material);
   this.mesh.position.add(new THREE.Vector3(x,y,z));
 
@@ -257,6 +259,13 @@ Shooter.prototype.animate = function() {
   }
 
   // TODO: Change colors based on time to fire
+  let timeLeft = (this.nextShot - time) / (this.nextShot - this.prevShot);
+  if (Math.floor(timeLeft * 20) % 3 == 0) {
+    let currentColor = enemyColor.clone().lerp(white, timeLeft);
+    this.material.color = currentColor;
+    this.material.trueColor = currentColor;
+  }
+
 
   this.position = this.mesh.position;
 }
