@@ -80,6 +80,18 @@ function initRenderer() {
   	// sound.play();
   });
 
+  let listenerHit = new THREE.AudioListener();
+  camera2d.add(listenerHit);
+
+  soundHit = new THREE.Audio(listenerHit);
+  let audioLoaderHit = new THREE.AudioLoader();
+  audioLoaderHit.load( 'sounds/blaster.wav', function( buffer ) {
+    soundHit.setBuffer( buffer );
+    soundHit.setLoop( false );
+    soundHit.setVolume( 0.8 );
+    // sound.play();
+  });
+
   controls.minDistance = 1000;
   controls.maxDistance = 1000;
   controls.maxAzimuthAngle = Math.PI / 8;
