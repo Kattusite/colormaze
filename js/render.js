@@ -133,29 +133,6 @@ function initRenderer() {
   let mesh1 = new THREE.Mesh(geometry1, material1);
   mesh1.position.set(0,0,-1100);
   // scene.add(mesh1);
-
-  particleSystem = new THREE.GPUParticleSystem({
-    maxParticles: 250000
-  });
-  scene.add(particleSystem);
-  options = {
-    position: new THREE.Vector3(),
-    positionRandomness: 0.4,
-    velocity: new THREE.Vector3(),
-    velocityRandomness: .5,
-    color: alv,
-    colorRandomness: .2,
-    turbulence: .5,
-    lifetime: 0,
-    size: 30,
-    sizeRandomness: 10
-  };
-  spawnerOptions = {
-      spawnRate: 2500,
-      horizontalSpeed: 1.5,
-      verticalSpeed: 1.33,
-      timeScale: 8
-  };
   // ==================================================================
 
   // Disable colors that aren't yet unlocked
@@ -193,7 +170,28 @@ function initEntities() {
 }
 
 function initParticles() {
-  // TODO: Copy the particles code here
+  particleSystem = new THREE.GPUParticleSystem({
+    maxParticles: 250000
+  });
+  scene.add(particleSystem);
+  options = {
+    position: new THREE.Vector3(),
+    positionRandomness: 0.4,
+    velocity: new THREE.Vector3(),
+    velocityRandomness: .5,
+    color: alv,
+    colorRandomness: .2,
+    turbulence: .5,
+    lifetime: 0,
+    size: 30,
+    sizeRandomness: 10
+  };
+  spawnerOptions = {
+      spawnRate: 2500,
+      horizontalSpeed: 1.5,
+      verticalSpeed: 1.33,
+      timeScale: 8
+  };
 }
 
 function initWalls() {
