@@ -175,7 +175,7 @@ var SCENE_OBJECTIVES = {
       },
       onUnlock: function() {
         options.lifetime = 4;
-        player.speed *= 1.75;
+        player.speed *= 1.45;
       }
     }
   },

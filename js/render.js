@@ -234,7 +234,7 @@ function initParticles() {
     sizeRandomness: 10
   };
   spawnerOptions = {
-      spawnRate: 2500,
+      spawnRate: 5000,
       horizontalSpeed: 1.5,
       verticalSpeed: 1.33,
       timeScale: 8

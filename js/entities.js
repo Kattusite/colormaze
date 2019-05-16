@@ -244,6 +244,7 @@ Player.prototype.hitFor = function(dmg) {
 // Heal the player for hp points of health
 Player.prototype.healFor = function(hp) {
   this.hitFor(-hp);
+  options.lifetime = 4;
 }
 
 Player.prototype.isDead = function() {
