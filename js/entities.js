@@ -470,6 +470,9 @@ Objective.prototype.animate = function() {
     player.speed *= slowdown;
     showMessage(msg, 2000, function() {player.speed /= slowdown});
 
+    // Heal the plyer
+    player.healFor(100);
+
     this.dead = true;
   }
 
